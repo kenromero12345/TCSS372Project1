@@ -1,6 +1,6 @@
 package model;
 
-import applicationAndView.GUIMain;
+import application.GUIMain;
 
 public class Computer {
 	
