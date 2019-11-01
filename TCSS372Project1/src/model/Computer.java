@@ -1,7 +1,5 @@
 package model;
 
-import application.GUIMain;
-
 public class Computer {
 	
 	public Computer() {
@@ -10,7 +8,7 @@ public class Computer {
 	public void load() {
 		
 	}
-	public void execute(GUIMain g) {
+	public void execute(String instructions) {
 		
 	}
 }
