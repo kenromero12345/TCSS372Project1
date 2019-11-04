@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -35,15 +36,15 @@ public class GUIMain {
 //	 */
 //	private static final BigInteger MAXUNSIGNED = new BigInteger("4294967295");
 //	
-//	/**
-//	 * Max signed for 32 bit
-//	 */
-//	private static final BigInteger MAXSIGNED = new BigInteger("2147483647");
-//	
-//	/**
-//	 * Min signed for 32 bit
-//	 */
-//	private static final BigInteger MINSIGNED = new BigInteger("2147483648").negate();
+	/**
+	 * Max signed for 32 bit
+	 */
+	private static final BigInteger MAXSIGNED = new BigInteger("2147483647");
+	
+	/**
+	 * Min signed for 32 bit
+	 */
+	private static final BigInteger MINSIGNED = new BigInteger("2147483648").negate();
 
 	private static final int STARTX = 10;
 
@@ -205,7 +206,7 @@ public class GUIMain {
 	/**
 	 * memory panel lists
 	 */
-	private ArrayList<RegisterMemJPanel> memList;
+	public ArrayList<RegisterMemJPanel> memList;
 	
 //	/**
 //	 * 
@@ -215,7 +216,7 @@ public class GUIMain {
 	/**
 	 * register panel lists
 	 */
-	private ArrayList<RegisterMemJPanel> regJPanel;
+	public ArrayList<RegisterMemJPanel> regJPanel;
 	
 //	/**
 //	 * number of instructions
@@ -746,7 +747,7 @@ public class GUIMain {
 	/**
 	 * the modified jpanel for the memory & register
 	 */
-	class RegisterMemJPanel extends JPanel{
+	public class RegisterMemJPanel extends JPanel{
 		
 		/**
 		 * A generated serial version UID for object Serialization.
@@ -765,9 +766,14 @@ public class GUIMain {
 		/**
 		 * sets the text of a label
 		 * @param s the given string
+		 * @throws OverFlowException 
 		 */
-		public void setValue(String s) {
-			valLabel.setText(s + " ");
+		public void setValue(String s) throws ArithmeticException {
+			if(MAXSIGNED.compareTo(new BigInteger(s)) == -1 || BigInteger.ZERO.compareTo(new BigInteger(s)) == 1) {
+				throw new ArithmeticException();
+			} else {
+				valLabel.setText(s + " ");
+			}
 		}
 	}
 }
