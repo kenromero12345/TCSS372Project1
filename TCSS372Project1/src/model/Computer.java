@@ -23,6 +23,10 @@ public class Computer {
 		
 	}
 	
+	public void execute() {
+		
+	}
+	
 	public void execute(GUIMain gui, String instr) {
 		//test error
 		int i = 0;
