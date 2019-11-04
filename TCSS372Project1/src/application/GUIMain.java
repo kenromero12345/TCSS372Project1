@@ -574,7 +574,7 @@ public class GUIMain {
 //		for (int i = 0; i < counter; i++) {
 //			//	comp.load();
 //		}
-		comp.execute(txtArea.getText());
+		comp.execute(this, txtArea.getText());
 	}
 	
 //	/**
