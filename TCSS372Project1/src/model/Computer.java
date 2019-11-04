@@ -6,7 +6,7 @@ package model;
 
 import javax.swing.JOptionPane;
 
-import application.GUIMain;
+import view.GUIMain;
 
 public class Computer {
 	
