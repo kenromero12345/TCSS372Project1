@@ -30,8 +30,23 @@ public class GUIMain {
 //	 * Width of the constant textbox
 //	 */
 //	private static final int STARTWIDTH_FOR_CONST = 80;
+	
+	/**
+	 * width of frame
+	 */
+	private static final int FRAMEWIDTH = 965;
 
-//	/**
+	/**
+	 * width for memory panels
+	 */
+	private static final int WIDTHFORPANELS_M = 190;
+	
+	/**
+	 * width of memory panels
+	 */
+	private static final int WIDTHFORPANEL_M = 230;
+
+	//	/**
 //	 * Max unsigned for 32 bit
 //	 */
 //	private static final BigInteger MAXUNSIGNED = new BigInteger("4294967295");
@@ -46,12 +61,24 @@ public class GUIMain {
 	 */
 	private static final BigInteger MINSIGNED = new BigInteger("2147483648").negate();
 
+	/**
+	 * starting x position
+	 */
 	private static final int STARTX = 10;
 
+	/**
+	 * every labels width
+	 */
 	private static final int LABELWIDTH = 70;
 
+	/**
+	 * every label's height
+	 */
 	private static final int LABELHEIGHT = 15;
 
+	/**
+	 * starting y position
+	 */
 	private static final int STARTY = 10;
 
 	/**
@@ -104,11 +131,6 @@ public class GUIMain {
 	private static final int FRAMEHEIGHT = 560;
 
 	/**
-	 * width of frame
-	 */
-	private static final int FRAMEWIDTH = 925;
-
-	/**
 	 * y position of frame
 	 */
 	private static final int FRAMEY = 0;
@@ -152,11 +174,6 @@ public class GUIMain {
 	 * memory panel's position y
 	 */
 	private static final int YFORPANEL_M = 720;
-
-	/**
-	 * width of memory panels
-	 */
-	private static final int WIDTHFORPANEL_M = 190;
 
 	/**
 	 * gap length
@@ -369,7 +386,7 @@ public class GUIMain {
 		for (int i = 0; i < 50; i++) {
 			RegisterMemJPanel pan = new RegisterMemJPanel("" + i);
 			pan.setBounds(STARTX, STARTY + i * YGAPFORPANELS_R
-					, WIDTHFORPANELS_R, HEIGHTFORPANELS_R);
+					, WIDTHFORPANELS_M, HEIGHTFORPANELS_R);
 			memJPanel.setPreferredSize(new Dimension(WIDTHFORPANELS_R
 					, 50 * (HEIGHTFORPANELS_R + GAP) + GAP));
 			memJPanel.add(pan);
