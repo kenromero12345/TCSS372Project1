@@ -31,6 +31,8 @@ public class GUIMain {
 //	 */
 //	private static final int STARTWIDTH_FOR_CONST = 80;
 	
+	private static final int MAX_REGISTERS = 50;
+
 	/**
 	 * width of frame
 	 */
@@ -383,8 +385,8 @@ public class GUIMain {
 	 * sets the memory panel
 	 */
 	public void setMemJPanel() {
-		for (int i = 0; i < 50; i++) {
-			RegisterMemJPanel pan = new RegisterMemJPanel("" + i);
+		for (int i = 0; i < MAX_REGISTERS; i++) {
+			RegisterMemJPanel pan = new RegisterMemJPanel("" + convertToHexOnMARSMemory(i));
 			pan.setBounds(STARTX, STARTY + i * YGAPFORPANELS_R
 					, WIDTHFORPANELS_M, HEIGHTFORPANELS_R);
 			memJPanel.setPreferredSize(new Dimension(WIDTHFORPANELS_R
@@ -393,7 +395,14 @@ public class GUIMain {
 			memList.add(pan);
 		}
 	}
-
+	
+	private String convertToHexOnMARSMemory(int i) {
+		String startHex = "0x";
+		BigInteger startDec = new BigInteger("268500992");
+		BigInteger toHex= new BigInteger(startDec.add(BigInteger.valueOf(i * 4)).toString(), 10);
+		return startHex + toHex.toString(16);
+	}
+	
 //	/**
 //	 * sets the combobox actions
 //	 * @param cb the current opcode combobox
@@ -786,7 +795,7 @@ public class GUIMain {
 		 * @throws OverFlowException
 		 */
 		public void setValue(String s) throws ArithmeticException {
-			if(MAXSIGNED.compareTo(new BigInteger(s)) == -1 || BigInteger.ZERO.compareTo(new BigInteger(s)) == 1) {
+			if(MAXSIGNED.compareTo(new BigInteger(s)) == -1 || MINSIGNED.compareTo(new BigInteger(s)) == 1) {
 				throw new ArithmeticException();
 			} else {
 				valLabel.setText(s + " ");
