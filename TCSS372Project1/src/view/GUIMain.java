@@ -25,7 +25,7 @@ import model.Computer;
  * The main application and the GUI
  */
 public class GUIMain {
-	
+
 //	/**
 //	 * Width of the constant textbox
 //	 */
@@ -35,12 +35,12 @@ public class GUIMain {
 //	 * Max unsigned for 32 bit
 //	 */
 //	private static final BigInteger MAXUNSIGNED = new BigInteger("4294967295");
-//	
+//
 	/**
 	 * Max signed for 32 bit
 	 */
 	private static final BigInteger MAXSIGNED = new BigInteger("2147483647");
-	
+
 	/**
 	 * Min signed for 32 bit
 	 */
@@ -73,7 +73,7 @@ public class GUIMain {
 	 * width for register panesl
 	 */
 	private static final int WIDTHFORPANELS_R = 150;
-	
+
 //	/**
 //	 * height for instructions
 //	 */
@@ -86,7 +86,7 @@ public class GUIMain {
 //			"", "ADD", "ADDU", "AND", "OR"
 //			, "ADDI", "ADDIU", "ANDI", "ORI", "LW", "SW", "BEQ", "BNE"
 //			, "J", "JR"};
-	
+
 	/**
 	 * registers of mips
 	 */
@@ -97,7 +97,7 @@ public class GUIMain {
 			, "24 t8", "25 t9"
 			, "26 k0", "27 k1"
 			, "28 gp", "29 sp", "30 fp", "31 ra"};
-	
+
 	/**
 	 * height of frame
 	 */
@@ -117,17 +117,17 @@ public class GUIMain {
 	 * x position of frame
 	 */
 	private static final int FRAMEX = 0;
-	
+
 	/**
 	 * instruction panel's x position
 	 */
 	private static final int XFORPANEL_I = 10;
-	
+
 	/**
 	 * instruction panel's y position
 	 */
 	private static final int YFORPANEL = 30;
-	
+
 //	/**
 //	 * width of comboboxes
 //	 */
@@ -137,17 +137,17 @@ public class GUIMain {
 	 * width of instruction panels
 	 */
 	private static final int WIDTHFORPANEL_I = 380;
-	
+
 	/**
 	 * height of the panels
 	 */
 	private static final int HEIGHTFORPANELS = 470;
-	
+
 	/**
 	 * height of the register panels
 	 */
 	private static final int HEIGHTFORPANELS_R = 20;
-	
+
 	/**
 	 * memory panel's position y
 	 */
@@ -157,7 +157,7 @@ public class GUIMain {
 	 * width of memory panels
 	 */
 	private static final int WIDTHFORPANEL_M = 190;
-	
+
 	/**
 	 * gap length
 	 */
@@ -167,77 +167,77 @@ public class GUIMain {
 //	 * x position of memory panel
 //	 */
 //	private static final int XFORPANEL_M = 10;
-	 
+
 //	/**
 //	 * instruction panel
 //	 */
 //	private JPanel instrJPanel;
-	
+
 	/**
 	 * memory panel
 	 */
 	private JPanel memJPanel;
-//	
+//
 //	/**
 //	 * opcode comboboxes
 //	 */
 //	private ArrayList<OpcodeJComboBox> opcodeJComboBoxes;
-//	
+//
 //	/**
 //	 * register destination comboboxes
 //	 */
 //	private ArrayList<RegisterJComboBox> regDestJComboBoxes;
-//	
+//
 //	/**
 //	 * 1st register source comboboxes
 //	 */
 //	private ArrayList<RegisterJComboBox> regSource1JComboBoxes;
-//	
+//
 //	/**
 //	 * 2nd register source comboboxes
 //	 */
 //	private ArrayList<RegisterJComboBox> regSource2JComboBoxes;
-//	
+//
 //	/**
 //	 * constant textfields
 //	 */
 //	private ArrayList<ConstantJTextField> constantJTextFields;
-	
+
 	/**
 	 * memory panel lists
 	 */
 	public ArrayList<RegisterMemJPanel> memList;
-	
+
 //	/**
-//	 * 
+//	 *
 //	 */
 //	private ArrayList<JButton> plusMinusJButton;
-	
+
 	/**
 	 * register panel lists
 	 */
 	public ArrayList<RegisterMemJPanel> regJPanel;
-	
+
 //	/**
 //	 * number of instructions
 //	 */
 //	private int counter = 0;
-	
+
 	/**
 	 * the frame of the application
 	 */
 	private JFrame frmGui;
-	
+
 	/**
 	 * the backend of the application
 	 */
 	private Computer comp;
-	
+
 	/**
 	 * textarea for instruction
 	 */
 	private JTextArea txtArea;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -269,13 +269,13 @@ public class GUIMain {
 		setUpFrame();
 		setUpComponents();
 	}
-	
+
 	/**
 	 * sets up the components of the frame
 	 */
 	public void setUpComponents() {
-//		instrJPanel.setLayout(null);	
-		memJPanel.setLayout(null);	
+//		instrJPanel.setLayout(null);
+		memJPanel.setLayout(null);
 //		JScrollPane scrollPaneInst = new JScrollPane(instrJPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 //				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		JScrollPane scrollPaneInst = new JScrollPane(txtArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -286,7 +286,7 @@ public class GUIMain {
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneMem.setBounds(YFORPANEL_M, YFORPANEL, WIDTHFORPANEL_M, HEIGHTFORPANELS);
 		frmGui.getContentPane().add(scrollPaneMem);
-		
+
 		setLabels();
 		setRegisterJPanel();
 		setMemJPanel();
@@ -299,16 +299,16 @@ public class GUIMain {
 		JLabel memL = new JLabel("Memory");
 		memL.setBounds(YFORPANEL_M, STARTY, LABELWIDTH, LABELHEIGHT);
 		frmGui.getContentPane().add(memL);
-		
+
 		JLabel regL = new JLabel("Register");
 		regL.setBounds(XFORPANEL_R, STARTY, LABELWIDTH, LABELHEIGHT);
 		frmGui.getContentPane().add(regL);
-		
+
 		JLabel instrL = new JLabel("Instruction");
 		instrL.setBounds(STARTX, STARTY, LABELWIDTH, LABELHEIGHT);
 		frmGui.getContentPane().add(instrL);
 	}
-	
+
 	/**
 	 * sets up the frame
 	 */
@@ -322,7 +322,7 @@ public class GUIMain {
 		frmGui.setLocationRelativeTo(null);
 		frmGui.setResizable(false);
 	}
-	
+
 	/**
 	 * initialize the instance variables
 	 */
@@ -340,7 +340,7 @@ public class GUIMain {
 		memList = new ArrayList<>();
 		txtArea = new JTextArea();
 	}
-	
+
 	/**
 	 * sets the register panel
 	 */
@@ -354,14 +354,14 @@ public class GUIMain {
 			frmGui.getContentPane().add(pan);
 			regJPanel.add(pan);
 			i++;
-			
+
 			if (i % 17 == 16) {
 				j++;
 				i = 0;
 			}
 		}
 	}
-	
+
 	/**
 	 * sets the memory panel
 	 */
@@ -376,20 +376,20 @@ public class GUIMain {
 			memList.add(pan);
 		}
 	}
-	
+
 //	/**
 //	 * sets the combobox actions
 //	 * @param cb the current opcode combobox
 //	 */
 //	public void setComboBoxAction(OpcodeJComboBox cb) {
 //		removeFromListsAndPanel(cb, opcodeJComboBoxes.indexOf(cb));
-//		
+//
 //		RegisterJComboBox rd = new RegisterJComboBox();
 //		RegisterJComboBox rs = new RegisterJComboBox();
 //		RegisterJComboBox rt = new RegisterJComboBox();
 //		ConstantJTextField constant = new ConstantJTextField();
 ////		JButton btn = new JButton("+/-");
-//		
+//
 //		if (cb.getSelectedIndex() >= 1 && cb.getSelectedIndex() <= 4) {
 //			setRD(cb, rd);
 //			setRS(cb, rs);
@@ -409,9 +409,9 @@ public class GUIMain {
 //		} else if (cb.getSelectedIndex() == 14) {
 //			setRD(cb, rd);
 //		}
-//		
+//
 //		addFromTheLists(rd, rs, rt, constant);
-//		
+//
 //		instrJPanel.revalidate();
 //		instrJPanel.repaint();
 //	}
@@ -516,10 +516,10 @@ public class GUIMain {
 ////		plusMinusJButton.add(btn);
 ////		instrJPanel.add(btn);
 //	}
-	
+
 	/**
 	 * Creates the JMenuBar.
-	 * 
+	 *
 	 * @return the JMenuBar
 	 */
 	public JMenuBar createMenuBar() {
@@ -529,10 +529,10 @@ public class GUIMain {
 
 		return bar;
 	}
-	
+
 	/**
 	 * Creates the File JMenu.
-	 * 
+	 *
 	 * @author Ken Gil Romero
 	 * @return the File menu.
 	 */
@@ -550,7 +550,7 @@ public class GUIMain {
 
 		return menu;
 	}
-	
+
 //	/**
 //	 * add an instruction to the instruction panel
 //	 */
@@ -567,7 +567,7 @@ public class GUIMain {
 ////				, HEIGHTFORINSTR + counter * (HEIGHTFORINSTR + GAP) - GAP));
 ////		instrJPanel.revalidate();
 //	}
-	
+
 	/**
 	 * execute the instructions
 	 */
@@ -577,22 +577,22 @@ public class GUIMain {
 //		}
 		comp.execute(this, txtArea.getText());
 	}
-	
+
 //	/**
 //	 * modified combobox of the opcode
 //	 */
 //	class OpcodeJComboBox extends JComboBox<String> {
-//		
+//
 //		/**
 //		 * A generated serial version UID for object Serialization.
 //		 */
 //		private static final long serialVersionUID = 4888307132644146890L;
-//		
+//
 //		/**
 //		 * shows if the combobox has been clicked
 //		 */
 //		protected boolean isClicked;
-//		
+//
 //		/**
 //		 * contructor of the opcode combobox
 //		 */
@@ -603,12 +603,12 @@ public class GUIMain {
 //			}
 //		}
 //	}
-//	
+//
 //	/**
 //	 * modified register combobox
 //	 */
 //	class RegisterJComboBox extends JComboBox<String> {
-//		
+//
 //		/**
 //		 * A generated serial version UID for object Serialization.
 //		 */
@@ -624,17 +624,17 @@ public class GUIMain {
 //			}
 //		}
 //	}
-//	
+//
 //	/**
 //	 * modified textfield for the constant
 //	 */
 //	class ConstantJTextField extends JTextField {
-//		
+//
 //		/**
 //		 * a boolean to know if the constant is unsigned
 //		 */
 //		protected boolean unsigned;
-//		
+//
 //		/**
 //		 * A generated serial version UID for object Serialization.
 //		 */
@@ -646,12 +646,12 @@ public class GUIMain {
 //		public ConstantJTextField() {
 //			super("0");
 //			this.addKeyListener(new KeyAdapter( ) {
-//				
+//
 //				@Override
 //				public void keyTyped(KeyEvent e) {
 //					consumeNumAndNegative(e);
 //				}
-//				
+//
 //				@Override
 //				public void keyReleased(KeyEvent e) {
 //					removeNegativeWhenNotAtFirst();
@@ -718,16 +718,16 @@ public class GUIMain {
 //								new BigInteger(getText())) == -1) {
 //							setText(MAXUNSIGNED.toString());
 //						}
-//						
+//
 //						if (BigInteger.ZERO.compareTo(new BigInteger(getText())) == 1) {
 //							setText(BigInteger.ZERO.toString());
 //						}
-//						
+//
 //					} else {
 //						if(MAXSIGNED.compareTo(new BigInteger(getText())) == -1) {
 //							setText(MAXSIGNED.toString());
 //						}
-//						
+//
 //						if (MINSIGNED.compareTo(new BigInteger(getText())) == 1) {
 //							setText(MINSIGNED.toString());
 //						}
@@ -735,7 +735,7 @@ public class GUIMain {
 //				}
 //			});
 //		}
-//		
+//
 //		/**
 //		 * sets if the constant is unsigned
 //		 */
@@ -743,12 +743,12 @@ public class GUIMain {
 //			unsigned = b;
 //		}
 //	}
-	
+
 	/**
 	 * the modified jpanel for the memory & register
 	 */
 	public class RegisterMemJPanel extends JPanel{
-		
+
 		/**
 		 * A generated serial version UID for object Serialization.
 		 */
@@ -762,11 +762,11 @@ public class GUIMain {
 			add(valLabel, BorderLayout.EAST);
 			setBackground(Color.LIGHT_GRAY);
 		}
-		
+
 		/**
 		 * sets the text of a label
 		 * @param s the given string
-		 * @throws OverFlowException 
+		 * @throws OverFlowException
 		 */
 		public void setValue(String s) throws ArithmeticException {
 			if(MAXSIGNED.compareTo(new BigInteger(s)) == -1 || BigInteger.ZERO.compareTo(new BigInteger(s)) == 1) {
