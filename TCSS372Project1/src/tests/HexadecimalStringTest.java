@@ -1,5 +1,5 @@
 /*
- * TCSS 371 Computer Architecture
+ * TCSS 372 Computer Architecture
  * Project 1
  */
 
@@ -18,7 +18,7 @@ import model.HexadecimalString;
  * @version November 7 2019
  */
 public class HexadecimalStringTest {
-	
+	//todo: TEST EXCEPTION THROW IF OUT OF BOUNDS
 	private HexadecimalString myHexString;
 
 	/**
