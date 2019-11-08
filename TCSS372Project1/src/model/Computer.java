@@ -13,20 +13,44 @@ import view.GUIMain;
 
 public class Computer {
 	
-	private final static int MAX_MEMORY = 50;
+	private final static int MAX_MEMORY = 56;
 	private final static int MAX_REGISTERS = 32;
 	
+	/**
+	 * This is the array holding all of the registers.
+	 */
+	private HexadecimalString[] mRegisters;
 	
-	private HexadecimalString mRegisters[];
-	private HexadecimalString mMemory[];
+	/**
+	 * This is the array representing all of the memory spaces. Each element in the
+	 * array represents four bytes in memory.
+	 */
+	private HexadecimalString[] mMemory;
+	
+	/** 
+	 * This is the hexadecimal string representing the program counter.
+	 */
+	private HexadecimalString mPC;
 
 	
 	public Computer() {
-	/*	for (int i = 20; i < MAX_REGISTERS; i++) {
-			mRegisters[i] = new BitString();
-			mRegisters[i].setValue(0);
-		} */
+		mPC = new HexadecimalString();
+		mPC.setDecimalValue(4194304);
+		mRegisters = new HexadecimalString[MAX_REGISTERS];
+		for(int i = 0; i < mRegisters.length; i++) {
+			mRegisters[i] = new HexadecimalString();
+		}
+		mMemory = new HexadecimalString[MAX_MEMORY];
+		for(int i = 0; i < mMemory.length; i++) {
+			mMemory[i] = new HexadecimalString();
+		}
+		mRegisters[28].setDecimalValue(268468224);
+		mRegisters[29].setDecimalValue(2147479548);
 		
+	}
+	
+	public void executeOneLine() {
+		mPC.setDecimalValue(mPC.getDecimalValue() + 4);
 	}
 	
 	public void executeAllLines() {
