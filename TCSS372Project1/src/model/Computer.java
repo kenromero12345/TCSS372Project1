@@ -151,19 +151,39 @@ public class Computer {
 	//I FORMAT INSTRUCTIONS
 	
 	public void addI() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - 4194304)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int destReg = myRegisterTable.get(instrArguments[0]);
+		int firstReg = myRegisterTable.get(instrArguments[1]);
+		long immediateOperand = Long.getLong(instrArguments[2]);
+		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 	
 	public void addIU() {
-		
+		try {
+			addI();
+		}
+		catch(IllegalArgumentException e) {
+			// Do not throw exception. Simple accept it.
+		}
 	}
 	
 	public void andI() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - 4194304)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int destReg = myRegisterTable.get(instrArguments[0]);
+		int firstReg = myRegisterTable.get(instrArguments[1]);
+		long immediateOperand = Long.getLong(instrArguments[2]);
+		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & immediateOperand);
 	}
 	
 	public void orI() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - 4194304)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int destReg = myRegisterTable.get(instrArguments[0]);
+		int firstReg = myRegisterTable.get(instrArguments[1]);
+		long immediateOperand = Long.getLong(instrArguments[2]);
+		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | immediateOperand);
 	}
 	
 	public void lw() {
@@ -237,6 +257,7 @@ public class Computer {
 			if(dataSegment) {
 				// Put number in segment
 				// PUt label
+				
 			}
 			
 		}
