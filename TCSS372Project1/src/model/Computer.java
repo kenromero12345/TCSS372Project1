@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-import view.GUIMain;
+import view.GUI;
 
 public class Computer {
 
@@ -59,6 +59,15 @@ public class Computer {
 	 */
 	private Map<String, Integer> mySymbolTable;
 
+//	public void execute(GUIMain gui, String instr) {
+//		//test error
+//		int i = 0;
+//		JOptionPane.showMessageDialog(null, "Error loading instructions.\nOn line " + i);
+//		//test changing label
+//		gui.regJPanel.get(0).setValue("5");
+//		gui.memList.get(0).setValue("4");
+//
+//	}
 
 	public Computer() {
 		numInstructions = 0;
@@ -212,7 +221,7 @@ public class Computer {
 	}
 
 	// FOR TESTING GUI ONLY ->>>
-	public void execute(GUIMain gui, String instr) {
+	public void execute(GUI gui, String instr) {
 		//test error
 		int i = 0;
 		JOptionPane.showMessageDialog(null, "Error loading instructions.\nOn line " + i);

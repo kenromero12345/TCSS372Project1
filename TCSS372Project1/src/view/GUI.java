@@ -2,7 +2,6 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,11 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import model.Computer;
+import controller.Simulator;
 /**
  * @author Owner Ken Gil Romero
  * @version Fall 19 TCSS 372
@@ -24,7 +24,7 @@ import model.Computer;
 /**
  * The main application and the GUI
  */
-public class GUIMain {
+public class GUI {
 
 //	/**
 //	 * Width of the constant textbox
@@ -225,7 +225,7 @@ public class GUIMain {
 	/**
 	 * memory panel lists
 	 */
-	public ArrayList<RegisterMemJPanel> memList;
+	private ArrayList<RegisterMemJPanel> memList;
 
 //	/**
 //	 *
@@ -235,7 +235,7 @@ public class GUIMain {
 	/**
 	 * register panel lists
 	 */
-	public ArrayList<RegisterMemJPanel> regJPanel;
+	private ArrayList<RegisterMemJPanel> regJPanel;
 
 //	/**
 //	 * number of instructions
@@ -247,36 +247,35 @@ public class GUIMain {
 	 */
 	private JFrame frmGui;
 
-	/**
-	 * the backend of the application
-	 */
-	private Computer comp;
+//	/**
+//	 * the backend of the application
+//	 */
+//	private Computer comp;
 
 	/**
 	 * textarea for instruction
 	 */
 	private JTextArea txtArea;
-
+	
 	/**
-	 * Launch the application.
+	 * the menu bar
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUIMain window = new GUIMain();
-					window.frmGui.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JMenu menu;
+	
+	/**
+	 * the assemble menu item
+	 */
+	private JMenuItem assemble;
+	
+	private JMenuItem execute;
 
+	
+	private Simulator sim;
 	/**
 	 * Create the application.
 	 */
-	public GUIMain() {
+	public GUI(Simulator sim) {
+		this.sim = sim;
 		initialize();
 	}
 
@@ -292,7 +291,7 @@ public class GUIMain {
 	/**
 	 * sets up the components of the frame
 	 */
-	public void setUpComponents() {
+	private void setUpComponents() {
 //		instrJPanel.setLayout(null);
 		memJPanel.setLayout(null);
 //		JScrollPane scrollPaneInst = new JScrollPane(instrJPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -331,21 +330,22 @@ public class GUIMain {
 	/**
 	 * sets up the frame
 	 */
-	public void setUpFrame() {
-		frmGui = new JFrame();
+	private void setUpFrame() {
 		frmGui.setTitle("MIPS");
 		frmGui.setBounds(FRAMEX, FRAMEY, FRAMEWIDTH, FRAMEHEIGHT);
 		frmGui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGui.setJMenuBar(createMenuBar());
 		frmGui.getContentPane().setLayout(null);
 		frmGui.setLocationRelativeTo(null);
-		frmGui.setResizable(false);
+		frmGui.setResizable(false);	
+		frmGui.setVisible(true);
 	}
 
 	/**
 	 * initialize the instance variables
 	 */
-	public void initializeInstVar() {
+	private void initializeInstVar() {
+		frmGui = new JFrame();
 //		opcodeJComboBoxes = new ArrayList<>();
 //		regDestJComboBoxes = new ArrayList<>();
 //		regSource1JComboBoxes = new ArrayList<>();
@@ -353,17 +353,23 @@ public class GUIMain {
 //		constantJTextFields = new ArrayList<>();
 //		plusMinusJButton = new ArrayList<>();
 		regJPanel = new ArrayList<>();
-		comp = new Computer();
+//		comp = new Computer();
 //		instrJPanel = new JPanel();
 		memJPanel = new JPanel();
 		memList = new ArrayList<>();
 		txtArea = new JTextArea();
+		
+		assemble = new JMenuItem("Assemble");
+		assemble.addActionListener(theEvent -> assembleInstruction());
+		
+		execute = new JMenuItem("Execute");
+		execute.addActionListener(theEvent -> executeInstruction());
 	}
 
 	/**
 	 * sets the register panel
 	 */
-	public void setRegisterJPanel() {
+	private void setRegisterJPanel() {
 		int i = 0;
 		int j = 0;
 		for (String s : REGISTERS) {
@@ -384,7 +390,7 @@ public class GUIMain {
 	/**
 	 * sets the memory panel
 	 */
-	public void setMemJPanel() {
+	private void setMemJPanel() {
 		for (int i = 0; i < MAX_REGISTERS; i++) {
 			RegisterMemJPanel pan = new RegisterMemJPanel("" + convertToHexOnMARSMemory(i));
 			pan.setBounds(STARTX, STARTY + i * YGAPFORPANELS_R
@@ -548,10 +554,10 @@ public class GUIMain {
 	 *
 	 * @return the JMenuBar
 	 */
-	public JMenuBar createMenuBar() {
+	private JMenuBar createMenuBar() {
 		final JMenuBar bar = new JMenuBar();
-
-		bar.add(createFileMenu());
+		createFileMenu();
+		bar.add(menu);
 
 		return bar;
 	}
@@ -562,19 +568,39 @@ public class GUIMain {
 	 * @author Ken Gil Romero
 	 * @return the File menu.
 	 */
-	private JMenu createFileMenu() {
-		final JMenu menu = new JMenu("File");
+	private void createFileMenu() {
+		menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_F);
 
-//		final JMenuItem add = new JMenuItem("Add Instruction");
-//		add.addActionListener(theEvent -> addInstruction());
-		final JMenuItem execute = new JMenuItem("Execute");
-		execute.addActionListener(theEvent -> executeInstruction());
-
-//		menu.add(add);
+		menu.add(assemble);
 		menu.add(execute);
 
-		return menu;
+	}
+	
+	private void assembleInstruction() {
+		if (txtArea.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(frmGui, "assembly failed");
+		} else {
+//			try catch TODO:
+			sim.assemble();
+			for (RegisterMemJPanel p : memList)  {
+				p.setBackground(Color.lightGray);
+			}
+			for (RegisterMemJPanel p : regJPanel)  {
+				p.setBackground(Color.lightGray);
+			}
+			JOptionPane.showMessageDialog(frmGui, "assembly done");
+		}
+	}
+	
+	public void setRegisterValue(int i, String s) {
+		regJPanel.get(i).setValue(s);
+		regJPanel.get(i).setBackground(Color.gray);
+	}
+	
+	public void setMemoryValue(int i, String s) {
+		memList.get(i).setValue(s);
+		memList.get(i).setBackground(Color.gray);
 	}
 
 //	/**
@@ -597,11 +623,11 @@ public class GUIMain {
 	/**
 	 * execute the instructions
 	 */
-	public void executeInstruction() {
-//		for (int i = 0; i < counter; i++) {
-//			//	comp.load();
-//		}
-		comp.execute(this, txtArea.getText());
+	private void executeInstruction() {
+		//try catch
+		sim.execute();
+		JOptionPane.showMessageDialog(frmGui, "execute done");
+//		comp.execute(this, txtArea.getText());
 	}
 
 //	/**
@@ -780,7 +806,7 @@ public class GUIMain {
 		 */
 		private static final long serialVersionUID = -6745484794302396327L;
 		protected JLabel valLabel = new JLabel();
-		public RegisterMemJPanel(String reg) {
+		private RegisterMemJPanel(String reg) {
 			super();
 			setLayout(new BorderLayout());
 			add(new JLabel(" " + reg), BorderLayout.WEST);
