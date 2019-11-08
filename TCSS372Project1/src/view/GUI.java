@@ -573,7 +573,7 @@ public class GUI {
 		menu.setMnemonic(KeyEvent.VK_F);
 
 		menu.add(assemble);
-		menu.add(execute);
+//		menu.add(execute);
 
 	}
 	
@@ -590,6 +590,7 @@ public class GUI {
 				p.setBackground(Color.lightGray);
 			}
 			JOptionPane.showMessageDialog(frmGui, "assembly done");
+			menu.add(execute);
 		}
 	}
 	
@@ -627,6 +628,8 @@ public class GUI {
 		//try catch
 		sim.execute();
 		JOptionPane.showMessageDialog(frmGui, "execute done");
+		//if execute work, 
+//		menu.remove(execute);
 //		comp.execute(this, txtArea.getText());
 	}
 
