@@ -37,7 +37,7 @@ public class ComputerTest {
 	}
 
 	/**
-	 * Test method for {@link HexadecimalString#assemble()}.
+	 * Test method for {@link Computer#assemble()}.
 	 */
 	@Test
 	public void testAssemble() {
@@ -115,49 +115,140 @@ public class ComputerTest {
 		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr2);
 		assertEquals(myComputer.getMaxInstructionIndex(), 4);
 		assertEquals(myComputer.getSymbolTable(), tempMappings2);
+		
+		// Third Test
+		myComputer.assemble( 
+				"	addi	$a0,$zero,2 \r\n" + 
+				" addi	$a1,$zero,4 \n" +
+				" addi	$a2,$zero,5 \n" +
+				"	j 	exit\n" +
+				" exit:");
+		Instruction[] tempInstr3 = new Instruction[100];
+		HexadecimalString[] tempHexStr3 = new HexadecimalString[100];
+		Map<String, Integer> tempMappings3 = new TreeMap<>();
+		
+		tempInstr3[0] = new Instruction("addi $a0,$zero,2");
+		tempInstr3[1] = new Instruction("addi $a1,$zero,4");
+		tempInstr3[2] = new Instruction("addi $a2,$zero,5");
+		tempInstr3[3] = new Instruction("j exit");
+		
+		for(int i = 0; i < 100; i++) {
+			tempHexStr3[i] = new HexadecimalString();
+		}
+		
+		tempMappings3.put("exit", 4);
+
+		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr3);
+		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr3);
+		assertEquals(myComputer.getMaxInstructionIndex(), 3);
+		assertEquals(myComputer.getSymbolTable(), tempMappings3);
+		
+		// Four Test
+		myComputer.assemble(".data\n"
+				+ "k:\n"
+				+ " .word -2309\n"
+				+ "m:\n" 
+				+ ".word 2345\n"
+				+ "chicken:\n" 
+				+ ".word -1\n"
+				+ ".text\n"
+				+ "	j 	exit\n" +
+				" exit:");
+		Instruction[] tempInstr4 = new Instruction[100];
+		HexadecimalString[] tempHexStr4 = new HexadecimalString[100];
+		Map<String, Integer> tempMappings4 = new TreeMap<>();
+		
+		tempInstr4[0] = new Instruction("j exit");
+		
+		tempHexStr4[0] = new HexadecimalString(-2309);
+		tempHexStr4[1] = new HexadecimalString(2345);
+		tempHexStr4[2] = new HexadecimalString(-1);
+		
+		for(int i = 3; i < 100; i++) {
+			tempHexStr4[i] = new HexadecimalString();
+		}
+		
+		tempMappings4.put("k", 0);
+		tempMappings4.put("m", 1);
+		tempMappings4.put("chicken", 2);
+		tempMappings4.put("exit", 1);
+
+		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr4);
+		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr4);
+		assertEquals(myComputer.getMaxInstructionIndex(), 0);
+		assertEquals(myComputer.getSymbolTable(), tempMappings4);
 	}
 
 	/**
-	 * Test method for {@link HexadecimalString#getUnformattedHex()}.
+	 * Test method for {@link Computer#getMaxInstructionIndex()}.
 	 */
 	@Test
-	public void testGetUnformattedHex() {
-		/*
-		assertEquals(myHexString.getUnformattedHex(), "0");
+	public void testGetMaxInstructionIndex() {
+		assertEquals(myComputer.getMaxInstructionIndex(), -1);
+		myComputer.assemble(
+				"lw $a0,n\n" +
+						"sw $a0,n\n"
+					+	"add $a0,$a0,$a1\n"+
+				" exit:");
 		
-		myHexString.setDecimalValue(24);
-		assertEquals(myHexString.getUnformattedHex(), "18");
+		assertEquals(myComputer.getMaxInstructionIndex(), 2);
 		
-		myHexString.setDecimalValue(43);
-		assertEquals(myHexString.getUnformattedHex(), "2b");
+		myComputer.assemble(".data\n"
+				+ "k:\n"
+				+ " .word -2309\n"
+				+ "m:\n" 
+				+ ".word 2345\n"
+				+ ".text\n"
+				+ "lw $a0, k\n"
+				+ "	j 	exit\n" +
+				" exit:");
 		
-		myHexString.setDecimalValue(-20);
-		assertEquals(myHexString.getUnformattedHex(), "ffffffffffffffec");
-		
-		myHexString.setDecimalValue(-2345);
-		assertEquals(myHexString.getUnformattedHex(), "fffffffffffff6d7"); */
+		assertEquals(myComputer.getMaxInstructionIndex(), 1);
 	}
 
 	/**
-	 * Test method for {@link HexadecimalString#setDecimalValue(long)}.
+	 * Test method for {@link Computer#getSymbolTable()}.
 	 */
 	@Test
-	public void testSetDecimalValue() {
-		/*
-		myHexString.setDecimalValue(24);
-		assertEquals(myHexString.getDecimalValue(), 24); 
+	public void testGetSymbolTable() {
+		assertEquals(myComputer.getSymbolTable(), new TreeMap<String,Integer>());
 		
-		myHexString.setDecimalValue(234);
-		assertEquals(myHexString.getDecimalValue(), 234); 
+		myComputer.assemble(".data\n"
+				+ "k:\n"
+				+ " .word -2309\n"
+				+ "m:\n" 
+				+ ".word 2345\n"
+				+ ".text\n"
+				+ "lw $a0, k\n"
+				+ "	j 	exit\n" +
+				" exit:");
 		
-		myHexString.setDecimalValue(-500);
-		assertEquals(myHexString.getDecimalValue(), -500); 
+		Map<String, Integer> temp = new TreeMap<>();
+		temp.put("k", 0);
+		temp.put("m", 1);
+		temp.put("exit", 2);
+		assertEquals(myComputer.getSymbolTable(), temp);
 		
-		myHexString.setDecimalValue(2147483647);
-		assertEquals(myHexString.getDecimalValue(), 2147483647); 
+		myComputer.assemble(".data\n"
+				+ "d:\n"
+				+ " .word -2309\n"
+				+ "g:\n" 
+				+ ".word 2345\n"
+				+ "u:\n"
+				+ ".word 0"
+				+ ".text\n"
+				+ " start:\n"
+				+ "lw $a0, k\n"
+				+ "	j 	exit\n" +
+				" exit:");
 		
-		myHexString.setDecimalValue(-2147483648);
-		assertEquals(myHexString.getDecimalValue(), -2147483648);  */
+		Map<String, Integer> temp2 = new TreeMap<>();
+		temp2.put("d", 0);
+		temp2.put("g", 1);
+		temp2.put("u", 2);
+		temp2.put("start", 0);
+		temp2.put("exit", 2);
+		assertEquals(myComputer.getSymbolTable(), temp2);		
 	}
 	
 	/**

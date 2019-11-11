@@ -5,106 +5,74 @@
 
 package model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import javax.swing.JOptionPane;
-
-import view.GUIMain;
-
 public class Computer {
 	
+	/** The maximum amount of memory allocated for the text segment. */
 	private final static int MAX_MEMORY_TEXT_SEGMENT = 100;
+	
+	/** The maximum amount of memory allocated for the data segment. */
 	private final static int MAX_MEMORY_DATA_SEGMENT = 100;
 	
+	/** The starting address of the text segment. */
 	private final static int STARTING_ADDRESS_TEXT = 4194304;
+	
+	/** The starting address of the data segment. */
 	private final static int STARTING_ADDRESS_DATA = 26850092;
 	// Formula for data (nonstack) (address - STARTING_ADDRESS_DATA)/4)
+	
+	/** The starting address of stack pointer. */
 	private final static int STARTING_ADDRESS_STACK = 2147479548;
 	// Formula for stack (address - STARTING_ADDRESS_STACK)/4 + STACK_INDEX
+	
+	/** The staring address of the global pointer. */
 	private final static int STARTING_ADDRESS_GLOBAL = 268468224;
+	
+	/** The index in the array where stack begins. */
 	private final static int STACK_INDEX = 50;
+	
+	/** The maximum amount of registers in the computer. */
 	private final static int MAX_REGISTERS = 32;
 	
-	/**
-	 * This is the array holding all of the registers.
-	 */
+	/** This is the array holding all of the registers. */
 	private HexadecimalString[] mRegisters;
 	
-	/**
-	 * This is the map that maps the register name to a number.
-	 */
+	/** This is the map that maps the register name to a number. */
 	private Map<String, Integer> myRegisterTable;
 	
-	/**
-	 * This is the array representing memory spaces used for instructions. 
-	 * Each element in the array represents four bytes in memory.
-	 */
+	/** This is the array representing memory spaces used for instructions. */ 
 	private Instruction[] mMemoryTextSegment;
+	 //Each element in the array represents four bytes in memory.
 	
-	/**
-	 * This is the array represent memory spaces used for storing memory. Each element in the
-	 * array represents four bytes in memory.
-	 */
+	/** This is the array represent memory spaces used for storing memory. */
+	//Each element in the array represents four bytes in memory.
 	private HexadecimalString[] mMemoryDataSegment;
 	
-	/**
-	 * This is the integer that represents the last instruction index in array.
-	 */
+	/** This is the integer that represents the last instruction index in array. */
 	private int maxInstructionIndex;
 	
-	/** 
-	 * This is the hexadecimal string representing the program counter.
-	 */
+	/** This is the hexadecimal string representing the program counter. */
 	private HexadecimalString mPC;
 	
-	/**
-	 * This is the index counter used internally when assembling the instructions
-	 * for the memory data segment.
-	 */
+	/** Index counter used internally when assembling the instructions for the memory data segment. */
 	private int memoryDataIndex;
 	
-	/**
-	 * This is the index counter used internally when assembling the instructions
-	 * for the memory text segment.
-	 */
+	/** Index counter used internally when assembling the instructions for the memory text segment. */
 	private int memoryTextIndex;
 	
-	/**
-	 * This is the map which represents the symbol table.
-	 */
+	/** This is the map which represents the symbol table. */
 	private Map<String, Integer> mySymbolTable;
 
-	
+	/**
+	 * Default constructor that initializes fields to their 
+	 * default values.
+	 */
 	public Computer() {
-		memoryDataIndex = 0;
-		memoryTextIndex = 0;
-		maxInstructionIndex = -1;
-		mPC = new HexadecimalString();
-		mPC.setDecimalValue(4194304);
-		mRegisters = new HexadecimalString[MAX_REGISTERS];
-		for(int i = 0; i < mRegisters.length; i++) {
-			mRegisters[i] = new HexadecimalString();
-		}
-		/*mMemoryTextSegment = new HexadecimalString[MAX_MEMORY_TEXT_SEGMENT];
-		for(int i = 0; i < mMemoryTextSegment.length; i++) {
-			mMemoryTextSegment[i] = new HexadecimalString();
-		}*/
-		mMemoryTextSegment = new Instruction[MAX_MEMORY_TEXT_SEGMENT];
-		/*for(int i = 0; i < mMemoryTextSegment.length; i++) {
-			mMemoryTextSegment[i] = new Instruction();
-		}*/
-		mMemoryDataSegment = new HexadecimalString[MAX_MEMORY_DATA_SEGMENT];
-		for(int i = 0; i < mMemoryDataSegment.length; i++) {
-			mMemoryDataSegment[i] = new HexadecimalString();
-		}
-		mRegisters[28].setDecimalValue(STARTING_ADDRESS_GLOBAL);
-		mRegisters[29].setDecimalValue(STARTING_ADDRESS_STACK);
-		mySymbolTable = new TreeMap<>();
-		myRegisterTable = new TreeMap<>();
+		resetComputer();
+		setUpRegisterMapping();
 	}
 	
 	public HexadecimalString[] getRegisters() {
@@ -121,6 +89,25 @@ public class Computer {
 	
 	public HexadecimalString getPC() {
 		return mPC;
+	}
+	
+	
+	/**
+	 * Gets the maximum instruction index.
+	 * 
+	 * @return The maximum instruction index.
+	 */
+	public int getMaxInstructionIndex() {
+		return maxInstructionIndex;
+	}
+	
+	/**
+	 * Gets the map containing the symbol table for the program.
+	 * 
+	 * @return The mapping of string to integer for the symbols in the program.
+	 */
+	public Map<String, Integer> getSymbolTable() {
+		return mySymbolTable;
 	}
 	
 	public void executeOneLine() {
@@ -266,8 +253,7 @@ public class Computer {
 			int addressOffset = Integer.getInteger(findAddress[0]);
 			int sourceReg = myRegisterTable.get(findAddress[1].substring(0,findAddress[1].length()-1));
 			int address = (int)mRegisters[sourceReg].getDecimalValue() + addressOffset;
-			mRegisters[destReg].setDecimalValue(mMemoryDataSegment[address].getDecimalValue());
-		// UNSURE ABOUT ADDRESSING ->>> DO WE DIVDE BY FOUR? DO WE ADD SOMETHIHNG TO IT?
+			mRegisters[destReg].setDecimalValue(mMemoryDataSegment[(address - STARTING_ADDRESS_DATA)/4].getDecimalValue());
 		}
 		else {
 			int address = mySymbolTable.get(instrArguments[1]);
@@ -296,15 +282,14 @@ public class Computer {
 		
 	}
 	
+	/**
+	 * Assembles the program based on the text input from
+	 * the user.
+	 * 
+	 * @param text The text that contains the instructions.
+	 */
 	public void assemble(String text) {
 		resetComputer();
-		// FIRST SCAN LINE FOR . IF YOU SEE . if it matches .text
-		// then go into .text mode. In this mode you put data in the
-		// corrent memory addresses.
-		// WHEN YOU REACH NEXT . WHICH IS .text THEN THESE ARE INSTRUCTIONS
-		// which you can put in the text segment.
-		// FIRST SCAN LINE FOR SEMICOLON. IF IT HAS THEN PUT INTO A MAP
-		// MAPPING THE WORD TO THE ADDRESS OF NEXT LINE
 		Scanner myScanner = new Scanner(text);
 		String temp;
 		boolean dataSegment = false;
@@ -315,22 +300,12 @@ public class Computer {
 				continue;
 			}
 			if(temp.contains(".data")) {
-
-				System.out.println("LJS:DKJFS:LDKJFA:LKFJDSA:LFKA:LFJDK");
-				// Need to know that the following lines are not instructions 
-				// Set boolean data segment to true
 				dataSegment = true;
 			}
 			else if(temp.contains(".text")) {
-				// Need to know that the following lines are instructions 
-				// Set boolean data segment to false
 				dataSegment = false;
 			}
 			else if(temp.contains(":")) {
-				// Label
-				// Put the label and the associated instr index into the 
-				// symbol table.
-				// Do not increment arrayInstrIndex
 				if(dataSegment) {
 					scanDataLabelLine(temp);
 				}
@@ -339,41 +314,28 @@ public class Computer {
 				}
 			}
 			else if(dataSegment) {
-				System.out.println("MEMORY DATA INDEX" + memoryDataIndex);
 				scanDataLine(temp);
-				//maxInstructionIndex++;
 			}
 			else {
-				// Regular instruction
-				// Put instruction in memory text segment and increment
-				// next arrayInstructionIndex by 1
 				putInstructionLine(temp);
 				maxInstructionIndex++;
-			}	
-			System.out.println("MAX INSTR INDEX: " + maxInstructionIndex);
+			}
 		}
-		System.out.println("MAX INSTRUCTION INDEX" + maxInstructionIndex);
-		System.out.println("MYSYBMOLTABLE" + mySymbolTable.toString());
-		System.out.println("MYINSTRUCTIONS" + Arrays.deepToString(mMemoryTextSegment));
-		System.out.println("MYDATA" + Arrays.deepToString(mMemoryDataSegment));
 		myScanner.close();
 	}
 	
-	public int getMaxInstructionIndex() {
-		return maxInstructionIndex;
-	}
-	
-	public Map<String, Integer> getSymbolTable() {
-		return mySymbolTable;
-	}
-	
-	public void scanDataLine(String oneLine) {
-		System.out.println("HERE IS THE DATA LINE" + oneLine + ".");
+	/**
+	 * Scans one line in the data portion of the instructions, 
+	 * and puts the word in appropriate memory location and updates
+	 * the index accordingly.
+	 * 
+	 * @param oneLine The line that will be scanned.
+	 */
+	private void scanDataLine(String oneLine) {
 		Scanner myScanner = new Scanner(oneLine);
 		if(myScanner.next().equals(".word")) {
 			long value = Long.valueOf(myScanner.next());
 			HexadecimalString variable = new HexadecimalString();
-			System.out.println("HERE IS THE VALUE: " + value);
 			variable.setDecimalValue(value);
 			mMemoryDataSegment[memoryDataIndex] = variable;
 			memoryDataIndex++;
@@ -381,35 +343,55 @@ public class Computer {
 		}
 		else {
 			myScanner.close();
-			throw new IllegalArgumentException("Unable to determine"
-					+ "the function.");
+			throw new IllegalArgumentException("Unable to determine the function:"
+					+ oneLine + ".");
 		}
 	}
 	
-	public void scanDataLabelLine(String labelLine) {
+	/**
+	 * Scans a label in the data section and puts the label
+	 * and corresponding location in the symbol table.
+	 * 
+	 * @param labelLine The line containing the label.
+	 */
+	private void scanDataLabelLine(String labelLine) {
 		Scanner myScanner = new Scanner(labelLine);
 		String varName = myScanner.next();
-		// Account for semicolon (:)
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryDataIndex);
 		myScanner.close();
 	}
 	
-	public void scanTextLabelLine(String labelLine) {
+	/**
+	 * Scans a label in the text section and puts the label
+	 * and corresponding location in the symbol table.
+	 * 
+	 * @param labelLine The line containing the label.
+	 */
+	private void scanTextLabelLine(String labelLine) {
 		Scanner myScanner = new Scanner(labelLine);
 		String varName = myScanner.next();
-		// Account for semicolon (:)
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryTextIndex);
 		myScanner.close();
 	}
 	
-	public void putInstructionLine(String instrLine) {
+	/**
+	 * Puts the line of instruction into the text segment
+	 * of memory and increments the index.
+	 * 
+	 * @param instrLine The line of instruction to be added into memory.
+	 */
+	private void putInstructionLine(String instrLine) {
 		Instruction instr = new Instruction();
 		instr.setInstructionString(instrLine);
 		mMemoryTextSegment[memoryTextIndex] = instr;
 		memoryTextIndex++;
 	}
 	
-	public void resetComputer() {
+	/** 
+	 * Resets the computer by setting all fields and variables
+	 * back to their initial state.
+	 */
+	private void resetComputer() {
 		memoryDataIndex = 0;
 		memoryTextIndex = 0;
 		maxInstructionIndex = -1;
@@ -424,12 +406,37 @@ public class Computer {
 		for(int i = 0; i < mMemoryDataSegment.length; i++) {
 			mMemoryDataSegment[i] = new HexadecimalString();
 		}
-		mRegisters[28].setDecimalValue(268468224);
-		mRegisters[29].setDecimalValue(2147479548);
+		mRegisters[28].setDecimalValue(STARTING_ADDRESS_GLOBAL);
+		mRegisters[29].setDecimalValue(STARTING_ADDRESS_STACK);
 		mySymbolTable = new TreeMap<>();
-		myRegisterTable = new TreeMap<>();
-		
-		
 	}
 	
+	/**
+	 * Sets up the mapping of registers.
+	 */
+	private void setUpRegisterMapping() {
+		myRegisterTable = new TreeMap<>();
+		myRegisterTable.put("$zero", 0);
+		myRegisterTable.put("$at", 1);
+		myRegisterTable.put("$v0", 2);
+		myRegisterTable.put("$v1", 3);
+		myRegisterTable.put("$a0", 4);
+		myRegisterTable.put("$a1", 5);
+		myRegisterTable.put("$a2", 6);
+		myRegisterTable.put("$a3", 7);
+		for(int i = 0; i <= 7; i++) {
+			myRegisterTable.put("$t" + i, i + 8);
+		}
+		for(int i = 0; i <= 7; i++) {
+			myRegisterTable.put("$s" + i, i + 16);
+		}
+		myRegisterTable.put("$t8", 24);
+		myRegisterTable.put("$t9", 25);
+		myRegisterTable.put("$k0", 26);
+		myRegisterTable.put("$k1", 27);
+		myRegisterTable.put("$gp", 28);
+		myRegisterTable.put("$sp", 29);
+		myRegisterTable.put("$fp", 30);
+		myRegisterTable.put("$ra", 31);
+	}
 }
