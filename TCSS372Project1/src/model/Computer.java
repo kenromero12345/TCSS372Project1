@@ -262,24 +262,66 @@ public class Computer {
 	}
 	
 	public void sw() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int sourceReg = myRegisterTable.get(instrArguments[0]);
+		// FORMAT: SW $REG1,4($REG2)
+		if(instrArguments[1].contains("(")) {
+			String[] findAddress = instrArguments[1].split("(");
+			int addressOffset = Integer.getInteger(findAddress[0]);
+			int addressInReg = myRegisterTable.get(findAddress[1].substring(0,findAddress[1].length()-1));
+			int address = (int)mRegisters[addressInReg].getDecimalValue() + addressOffset;
+			if(addressInReg == mRegisters[29].getDecimalValue()) {
+				// It is for stack
+				mMemoryDataSegment[(address - STARTING_ADDRESS_STACK)/4 + STACK_INDEX].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
+			}
+			else {
+				// Non stack data
+				mMemoryDataSegment[(address - STARTING_ADDRESS_DATA)/4].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
+			}
+		}
 	}
 	
 	public void beq() {
-		
+		// FORMAT: BEQ REG1, REG2, LABEL
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int firstReg = myRegisterTable.get(instrArguments[0]);
+		int secondReg = myRegisterTable.get(instrArguments[1]);
+		if(mRegisters[firstReg] == mRegisters[secondReg]) {
+			int address = mySymbolTable.get(instrArguments[2]);
+			// Subtract 4 because we will add 4 in the execute loop
+			mRegisters[29].setDecimalValue(mMemoryDataSegment[address].getDecimalValue() - 4);
+		}
 	}
 	
 	public void bne() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int firstReg = myRegisterTable.get(instrArguments[0]);
+		int secondReg = myRegisterTable.get(instrArguments[1]);
+		if(mRegisters[firstReg] != mRegisters[secondReg]) {
+			int destAddrIndex = mySymbolTable.get(instrArguments[2]);
+			// Subtract 4 because we will add 4 in the execute loop
+			mRegisters[29].setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
+		}
 	}
 	
 	//J FORMAT INSTRUCTIONS
 	public void j() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
+		// Subtract 4 because we will add 4 in the execute loop
+		mRegisters[29].setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
 	}
 	
 	public void jr() {
-		
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
+		// Subtract 4 because we will add 4 in the execute loop
+		mRegisters[29].setDecimalValue(mRegisters[destAddrIndex].getDecimalValue() - 4);
 	}
 	
 	/**
