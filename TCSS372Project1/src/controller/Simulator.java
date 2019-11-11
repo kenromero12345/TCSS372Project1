@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.NoSuchElementException;
+
 import model.Computer;
 import view.GUI;
 
@@ -32,12 +34,25 @@ public class Simulator {
 //	}
 	
 	public void execute() {
+		// example on how to use gui
 //		gui.setMemoryValue(0, "1");
 //		gui.setRegisterValue(0, "1");
+		comp.executeAllLines();
+		//TODO gui does stuff
 	}
 	
-	public void assemble() {
-		
+	public void assemble(String s) {
+		try {
+		comp.assemble(s);
+		} catch (NoSuchElementException e) {
+//			gui.showDialog(e.getMessage());
+			throw e;
+		}
+	}
+	
+	public void executeOneLine() {
+		comp.executeOneLine();
+		//TODO gui does stuff
 	}
 
 }

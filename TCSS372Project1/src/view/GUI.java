@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -267,9 +268,19 @@ public class GUI {
 	 */
 	private JMenuItem assemble;
 	
+	/**
+	 * the execute menu item
+	 */
 	private JMenuItem execute;
-
 	
+	/**
+	 * the execute 1 menu item
+	 */
+	private JMenuItem execute1;
+
+	/**
+	 * the controller of the application
+	 */
 	private Simulator sim;
 	/**
 	 * Create the application.
@@ -364,6 +375,9 @@ public class GUI {
 		
 		execute = new JMenuItem("Execute");
 		execute.addActionListener(theEvent -> executeInstruction());
+		
+		execute1 = new JMenuItem("Execute 1 Instruction");
+		execute1.addActionListener(theEvent -> execute1Instruction());
 	}
 
 	/**
@@ -407,6 +421,10 @@ public class GUI {
 		BigInteger startDec = new BigInteger("268500992");
 		BigInteger toHex= new BigInteger(startDec.add(BigInteger.valueOf(i * 4)).toString(), 10);
 		return startHex + toHex.toString(16);
+	}
+	
+	public void showDialog(String s) {
+		JOptionPane.showMessageDialog(frmGui, s);
 	}
 	
 //	/**
@@ -581,16 +599,15 @@ public class GUI {
 		if (txtArea.getText().trim().equals("")) {
 			JOptionPane.showMessageDialog(frmGui, "assembly failed");
 		} else {
-//			try catch TODO:
-			sim.assemble();
-			for (RegisterMemJPanel p : memList)  {
-				p.setBackground(Color.lightGray);
+			try {
+				sim.assemble(txtArea.getText());
+				resetRegMemColor();
+				JOptionPane.showMessageDialog(frmGui, "assembly done");
+				menu.add(execute);
+				menu.add(execute1);
+			} catch (NoSuchElementException e) {
+				showDialog(e.getMessage());
 			}
-			for (RegisterMemJPanel p : regJPanel)  {
-				p.setBackground(Color.lightGray);
-			}
-			JOptionPane.showMessageDialog(frmGui, "assembly done");
-			menu.add(execute);
 		}
 	}
 	
@@ -628,9 +645,36 @@ public class GUI {
 		//try catch
 		sim.execute();
 		JOptionPane.showMessageDialog(frmGui, "execute done");
+		menu.remove(execute);
+		menu.remove(execute1);
 		//if execute work, 
 //		menu.remove(execute);
 //		comp.execute(this, txtArea.getText());
+	}
+	
+	/**
+	 * execute 1 instruction
+	 */
+	private void execute1Instruction() {
+		resetRegMemColor();
+		sim.executeOneLine();
+		JOptionPane.showMessageDialog(frmGui, "execute one instruction");
+		
+		//TODO check if instruction is done
+//		menu.remove(execute);
+//		menu.remove(execute1);
+	}
+
+	/**
+	 * 
+	 */
+	private void resetRegMemColor() {
+		for (RegisterMemJPanel p : memList)  {
+			p.setBackground(Color.lightGray);
+		}
+		for (RegisterMemJPanel p : regJPanel)  {
+			p.setBackground(Color.lightGray);
+		}
 	}
 
 //	/**

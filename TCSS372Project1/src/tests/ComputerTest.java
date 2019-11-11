@@ -65,6 +65,20 @@ public class ComputerTest {
 	}
 	
 	@Test
+	public void testOrI() {
+		myComputer.assemble("ORI $t0,$t0,1");
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 1);
+	}
+	
+	@Test
+	public void testAndI() {
+		myComputer.assemble("ANDI $t0,$t0,1");
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 1);
+	}
+	
+	@Test
 	public void testAnd() {
 		myComputer.assemble("ADDI $t0,$t0,1");
 		myComputer.executeOneLine();
@@ -72,6 +86,14 @@ public class ComputerTest {
 		myComputer.executeOneLine();
 		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 0);
 	}
+	
+//	@Test
+//	public void testBeq() {
+//		myComputer.assemble("BEQ $t0,$t1,\n"
+//				+ "			ADDI $t0,$t0,1");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 0);
+//	}
 
 	/**
 	 * Test method for {@link Computer#assemble()}.
