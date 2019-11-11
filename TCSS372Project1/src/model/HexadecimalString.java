@@ -39,6 +39,10 @@ public class HexadecimalString {
 	public HexadecimalString() {
 		decimalValue = 0;
 	}
+	
+	public HexadecimalString(long theNum) {
+		setDecimalValue(theNum);
+	}
 
 	/**
 	 * Sets the decimal value of the hexadecimal string.
@@ -93,5 +97,16 @@ public class HexadecimalString {
 			}
 		}
 		return format.toUpperCase();
+	}
+	
+	@Override
+	public String toString() {
+		return getFormattedHex();
+	}
+	
+	@Override
+	public boolean equals(Object theOther) {
+		HexadecimalString temp = (HexadecimalString)theOther;
+		return temp.getDecimalValue() == decimalValue;
 	}
 }
