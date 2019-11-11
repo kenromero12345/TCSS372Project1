@@ -2,10 +2,14 @@ package application;
 import java.awt.EventQueue;
 
 import controller.Simulator;
-import model.Computer;
-import view.GUI;
 
+/**
+ * 
+ * @author Ken Gil Romero
+ *
+ */
 public class Main {
+	
 	/**
 	 * Launch the application.
 	 */
@@ -20,5 +24,4 @@ public class Main {
 			}
 		});
 	}
-
 }

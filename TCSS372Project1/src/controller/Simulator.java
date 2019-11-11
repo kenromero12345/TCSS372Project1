@@ -32,8 +32,8 @@ public class Simulator {
 //	}
 	
 	public void execute() {
-		gui.setMemoryValue(0, "1");
-		gui.setRegisterValue(0, "1");
+//		gui.setMemoryValue(0, "1");
+//		gui.setRegisterValue(0, "1");
 	}
 	
 	public void assemble() {

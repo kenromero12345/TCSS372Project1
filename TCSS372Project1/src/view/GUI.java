@@ -31,7 +31,7 @@ public class GUI {
 //	 */
 //	private static final int STARTWIDTH_FOR_CONST = 80;
 	
-	private static final int MAX_REGISTERS = 50;
+	private static final int MAX_REGISTERS = 100;
 
 	/**
 	 * width of frame
@@ -396,7 +396,7 @@ public class GUI {
 			pan.setBounds(STARTX, STARTY + i * YGAPFORPANELS_R
 					, WIDTHFORPANELS_M, HEIGHTFORPANELS_R);
 			memJPanel.setPreferredSize(new Dimension(WIDTHFORPANELS_R
-					, 50 * (HEIGHTFORPANELS_R + GAP) + GAP));
+					, MAX_REGISTERS * (HEIGHTFORPANELS_R + GAP) + GAP));
 			memJPanel.add(pan);
 			memList.add(pan);
 		}
