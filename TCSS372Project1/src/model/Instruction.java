@@ -5,6 +5,7 @@
 
 package model;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Scanner;
  * @author Michael Zachary Loria
  * @version November 8 2019
  */
-public abstract class Instruction {
+public class Instruction {
 	
 	/**
 	 * The string representing the instruction. 
@@ -47,6 +48,10 @@ public abstract class Instruction {
 		myNumArgs = 0;
 	}
 	
+	public Instruction(String theInstruction) {
+		setInstructionString(theInstruction);
+	}
+	
 	/**
 	 * Gets the instruction string.
 	 * 
@@ -62,7 +67,7 @@ public abstract class Instruction {
 	 * @param theInstruction The string that is used for this instruction.
 	 */
 	public void setInstructionString(String theInstruction) {
-		myInstruction = theInstruction;
+		myInstruction = theInstruction.toUpperCase();
 		Scanner scanOperands = new Scanner(myInstruction);
 		myOperation = scanOperands.next();
 		myArgs = scanOperands.next().split(",");
@@ -95,5 +100,16 @@ public abstract class Instruction {
 	 */
 	public String[] getArguments() {
 		return myArgs;
+	}
+	
+	@Override
+	public String toString() {
+		return "Operation: " + myOperation + ", Arguments: " + Arrays.deepToString(myArgs);
+	}
+	
+	@Override
+	public boolean equals(Object theOther) {
+		Instruction temp = (Instruction)theOther;
+		return toString().equals(temp.toString());
 	}
 }
