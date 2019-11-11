@@ -195,6 +195,11 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		int secondReg = myRegisterTable.get(instrArguments[2]);
+		System.out.println("DEST REG INDEX: " + destReg + "FIRST REG" + firstReg + "SECOND REG" + secondReg);
+		System.out.println("FIRST NUM" + mRegisters[firstReg].getDecimalValue() + " & SECOND NUM" + mRegisters[secondReg].getDecimalValue());
+		System.out.println("FIRST NUM" + mRegisters[firstReg].toString() + " & SECOND NUM" + mRegisters[secondReg].toString());
+		long temp = mRegisters[firstReg].getDecimalValue() & mRegisters[secondReg].getDecimalValue();
+		System.out.println("AND TOGETHER: " + temp);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & mRegisters[secondReg].getDecimalValue());
 	}
 	
@@ -291,7 +296,7 @@ public class Computer {
 		if(mRegisters[firstReg] == mRegisters[secondReg]) {
 			int address = mySymbolTable.get(instrArguments[2]);
 			// Subtract 4 because we will add 4 in the execute loop
-			mRegisters[29].setDecimalValue(mMemoryDataSegment[address].getDecimalValue() - 4);
+			mPC.setDecimalValue(mMemoryDataSegment[address].getDecimalValue() - 4);
 		}
 	}
 	
@@ -303,7 +308,7 @@ public class Computer {
 		if(mRegisters[firstReg] != mRegisters[secondReg]) {
 			int destAddrIndex = mySymbolTable.get(instrArguments[2]);
 			// Subtract 4 because we will add 4 in the execute loop
-			mRegisters[29].setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
+			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
 		}
 	}
 	
@@ -313,7 +318,7 @@ public class Computer {
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
 		// Subtract 4 because we will add 4 in the execute loop
-		mRegisters[29].setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
+		mPC.setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
 	}
 	
 	public void jr() {
@@ -321,7 +326,7 @@ public class Computer {
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
 		// Subtract 4 because we will add 4 in the execute loop
-		mRegisters[29].setDecimalValue(mRegisters[destAddrIndex].getDecimalValue() - 4);
+		mPC.setDecimalValue(mRegisters[destAddrIndex].getDecimalValue() - 4);
 	}
 	
 	/**
@@ -337,7 +342,6 @@ public class Computer {
 		boolean dataSegment = false;
 		while(myScanner.hasNextLine()) {
 			temp = myScanner.nextLine().trim();
-			System.out.println("H" + temp + "H");
 			if(temp.length() == 0) {
 				continue;
 			}
@@ -453,32 +457,67 @@ public class Computer {
 		mySymbolTable = new TreeMap<>();
 	}
 	
+	/** 
+	 * Gets the current memory data index. 
+	 */
+	public int getMemoryDataIndex() {
+		return memoryDataIndex;
+	}
+	
+	/** 
+	 * Gets the current memory text index. 
+	 */
+	public int getMemoryTextIndex() {
+		return memoryTextIndex;
+	}
+	
+	/**
+	 * Gets the starting address of the text.
+	 */
+	public int getStartingTextAddress() {
+		return STARTING_ADDRESS_TEXT;
+	}
+	
+	/**
+	 * Gets the starting address of the global pointer.
+	 */
+	public int getAddressGlobal() {
+		return STARTING_ADDRESS_GLOBAL;
+	}
+	
+	/**
+	 * Gets the starting address of the stack pointer.
+	 */
+	public int getAddressStack() {
+		return STARTING_ADDRESS_STACK;
+	}
+	
 	/**
 	 * Sets up the mapping of registers.
 	 */
 	private void setUpRegisterMapping() {
 		myRegisterTable = new TreeMap<>();
-		myRegisterTable.put("$zero", 0);
-		myRegisterTable.put("$at", 1);
-		myRegisterTable.put("$v0", 2);
-		myRegisterTable.put("$v1", 3);
-		myRegisterTable.put("$a0", 4);
-		myRegisterTable.put("$a1", 5);
-		myRegisterTable.put("$a2", 6);
-		myRegisterTable.put("$a3", 7);
+		myRegisterTable.put("$ZERO", 0);
+		myRegisterTable.put("$AT", 1);
+		myRegisterTable.put("$V0", 2);
+		myRegisterTable.put("$V1", 3);
+		myRegisterTable.put("$A0", 4);
+		myRegisterTable.put("$A1", 5);
+		myRegisterTable.put("$A2", 6);
+		myRegisterTable.put("$A3", 7);
 		for(int i = 0; i <= 7; i++) {
-			myRegisterTable.put("$t" + i, i + 8);
+			myRegisterTable.put("$T" + i, i + 8);
 		}
 		for(int i = 0; i <= 7; i++) {
-			myRegisterTable.put("$s" + i, i + 16);
+			myRegisterTable.put("$S" + i, i + 16);
 		}
-		myRegisterTable.put("$t8", 24);
-		myRegisterTable.put("$t9", 25);
-		myRegisterTable.put("$k0", 26);
-		myRegisterTable.put("$k1", 27);
-		myRegisterTable.put("$gp", 28);
-		myRegisterTable.put("$sp", 29);
-		myRegisterTable.put("$fp", 30);
-		myRegisterTable.put("$ra", 31);
+		myRegisterTable.put("$T8", 24);
+		myRegisterTable.put("$T9", 25);
+		myRegisterTable.put("$K0", 26);
+		myRegisterTable.put("$K1", 27);
+		myRegisterTable.put("$GP", 28);
+		myRegisterTable.put("$SP", 29);
+		myRegisterTable.put("$FP", 30);
+		myRegisterTable.put("$RA", 31);
 	}
 }

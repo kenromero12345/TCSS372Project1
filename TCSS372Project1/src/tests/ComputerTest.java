@@ -2,7 +2,6 @@
  * TCSS 372 Computer Architecture
  * Project 1
  */
-
 package tests;
 
 import static org.junit.Assert.*;
@@ -25,7 +24,8 @@ import model.Instruction;
  * @version November 7 2019
  */
 public class ComputerTest {
-	//todo: TEST EXCEPTION THROW IF OUT OF BOUNDS
+	
+	/** The computer used for testing. */
 	private Computer myComputer;
 
 	/**
@@ -37,7 +37,308 @@ public class ComputerTest {
 	}
 
 	/**
-	 * Test method for {@link Computer#assemble()}.
+	 * Test method for {@link model.Computer#Computer()}.
+	 */
+	@Test
+	public void testComputer() {
+		assertEquals(myComputer.getMemoryDataIndex(), 0);
+		assertEquals(myComputer.getMemoryTextIndex(), 0);
+		assertEquals(myComputer.getMaxInstructionIndex(), -1);
+		
+		Instruction[] tempInstr = new Instruction[100];
+		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr);
+		
+		HexadecimalString[] tempHexStr = new HexadecimalString[100];
+		for(int i = 0; i < 100; i++) {
+			tempHexStr[i] = new HexadecimalString();
+		}
+		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr);
+		
+		
+		HexadecimalString[] tempReg = new HexadecimalString[32];
+		for(int i = 0; i < tempReg.length; i++) {
+			tempReg[i] = new HexadecimalString();
+		}
+		tempReg[28].setDecimalValue(myComputer.getAddressGlobal());
+		tempReg[29].setDecimalValue(myComputer.getAddressStack());
+		assertArrayEquals(myComputer.getRegisters(), tempReg);
+
+		Map<String, Integer> tempMappings = new TreeMap<>();
+		assertEquals(myComputer.getSymbolTable(), tempMappings);
+		
+		HexadecimalString tempPC = new HexadecimalString();
+		tempPC.setDecimalValue(myComputer.getStartingTextAddress());
+		assertEquals(myComputer.getPC(), tempPC);
+
+	}
+
+	/**
+	 * Test method for {@link model.Computer#getRegisters()}.
+	 */
+	@Test
+	public void testGetRegisters() {
+		HexadecimalString[] tempReg = new HexadecimalString[32];
+		for(int i = 0; i < tempReg.length; i++) {
+			tempReg[i] = new HexadecimalString();
+		}
+		tempReg[28].setDecimalValue(myComputer.getAddressGlobal());
+		tempReg[29].setDecimalValue(myComputer.getAddressStack());
+		assertArrayEquals(myComputer.getRegisters(), tempReg);
+	}
+
+	/**
+	 * Test method for {@link model.Computer#getMemoryTextSegment()}.
+	 */
+	@Test
+	public void testGetMemoryTextSegment() {
+		Instruction[] tempInstr = new Instruction[100];
+		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr);
+		
+		myComputer.assemble(".data\nn:\n .word 15\n.text\r\n" + 
+				"	\r\n" + 
+				"main:\r\n" + 
+				"	lw	$a0,n \r\n" + 
+				"   addi $a0, $a0,1\n" +
+				"	jal fib	\r\n" + 
+				"	j 	exit");
+		
+		Instruction[] tempInstr2 = new Instruction[100];
+		
+		tempInstr2[0] = new Instruction("lw    	$a0,n");
+		tempInstr2[1] = new Instruction("   addi $a0, $a0,1");
+		tempInstr2[2] = new Instruction("jal     fib");
+		tempInstr2[3] = new Instruction("j exit");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#getMemoryDataSegment()}.
+	 */
+	@Test
+	public void testGetMemoryDataSegment() {
+		HexadecimalString[] tempHexStr = new HexadecimalString[100];
+		for(int i = 0; i < 100; i++) {
+			tempHexStr[i] = new HexadecimalString();
+		}
+		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr);
+		
+		// ADD MORE TESTS ONCE YOU TEST SW
+	}
+
+	/**
+	 * Test method for {@link model.Computer#getPC()}.
+	 */
+	@Test
+	public void testGetPC() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#getMaxInstructionIndex()}.
+	 */
+	@Test
+	public void testGetMaxInstructionIndex() {
+		assertEquals(myComputer.getMaxInstructionIndex(), -1);
+		myComputer.assemble(
+				"lw $a0,n\n" +
+						"sw $a0,n\n"
+					+	"add $a0,$a0,$a1\n"+
+				" exit:");
+		
+		assertEquals(myComputer.getMaxInstructionIndex(), 2);
+		
+		myComputer.assemble(".data\n"
+				+ "k:\n"
+				+ " .word -2309\n"
+				+ "m:\n" 
+				+ ".word 2345\n"
+				+ ".text\n"
+				+ "lw $a0, k\n"
+				+ "	j 	exit\n" +
+				" exit:");
+		
+		assertEquals(myComputer.getMaxInstructionIndex(), 1);
+	}
+
+	/**
+	 * Test method for {@link model.Computer#getSymbolTable()}.
+	 */
+	@Test
+	public void testGetSymbolTable() {
+		assertEquals(myComputer.getSymbolTable(), new TreeMap<String,Integer>());
+		
+		myComputer.assemble(".data\n"
+				+ "k:\n"
+				+ " .word -2309\n"
+				+ "m:\n" 
+				+ ".word 2345\n"
+				+ ".text\n"
+				+ "lw $a0, k\n"
+				+ "	j 	exit\n" +
+				" exit:");
+		
+		Map<String, Integer> temp = new TreeMap<>();
+		temp.put("k", 0);
+		temp.put("m", 1);
+		temp.put("exit", 2);
+		assertEquals(myComputer.getSymbolTable(), temp);
+		
+		myComputer.assemble(".data\n"
+				+ "d:\n"
+				+ " .word -2309\n"
+				+ "g:\n" 
+				+ ".word 2345\n"
+				+ "u:\n"
+				+ ".word 0"
+				+ ".text\n"
+				+ " start:\n"
+				+ "lw $a0, k\n"
+				+ "	j 	exit\n" +
+				" exit:");
+		
+		Map<String, Integer> temp2 = new TreeMap<>();
+		temp2.put("d", 0);
+		temp2.put("g", 1);
+		temp2.put("u", 2);
+		temp2.put("start", 0);
+		temp2.put("exit", 2);
+		assertEquals(myComputer.getSymbolTable(), temp2);	
+	}
+
+	/**
+	 * Test method for {@link model.Computer#executeOneLine()}.
+	 */
+	@Test
+	public void testExecuteOneLine() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#executeAllLines()}.
+	 */
+	@Test
+	public void testExecuteAllLines() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#add()}.
+	 */
+	@Test
+	public void testAdd() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#addU()}.
+	 */
+	@Test
+	public void testAddU() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#and()}.
+	 */
+	@Test
+	public void testAnd() {
+		myComputer.assemble("AND $a0,$gp,$sp");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(268468224);
+		HexadecimalString[] tempReg = myComputer.getRegisters();
+		assertEquals(tempReg[4], temp1);
+	}
+
+	/**
+	 * Test method for {@link model.Computer#or()}.
+	 */
+	@Test
+	public void testOr() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#addI()}.
+	 */
+	@Test
+	public void testAddI() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#addIU()}.
+	 */
+	@Test
+	public void testAddIU() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#andI()}.
+	 */
+	@Test
+	public void testAndI() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#orI()}.
+	 */
+	@Test
+	public void testOrI() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#lw()}.
+	 */
+	@Test
+	public void testLw() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#sw()}.
+	 */
+	@Test
+	public void testSw() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#beq()}.
+	 */
+	@Test
+	public void testBeq() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#bne()}.
+	 */
+	@Test
+	public void testBne() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#j()}.
+	 */
+	@Test
+	public void testJ() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#jr()}.
+	 */
+	@Test
+	public void testJr() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link model.Computer#assemble(java.lang.String)}.
 	 */
 	@Test
 	public void testAssemble() {
@@ -178,103 +479,79 @@ public class ComputerTest {
 		assertEquals(myComputer.getMaxInstructionIndex(), 0);
 		assertEquals(myComputer.getSymbolTable(), tempMappings4);
 	}
-
+	
 	/**
-	 * Test method for {@link Computer#getMaxInstructionIndex()}.
+	 * Test method for {@link model.Computer#getMemoryDataIndex()}.
 	 */
 	@Test
-	public void testGetMaxInstructionIndex() {
-		assertEquals(myComputer.getMaxInstructionIndex(), -1);
-		myComputer.assemble(
-				"lw $a0,n\n" +
-						"sw $a0,n\n"
-					+	"add $a0,$a0,$a1\n"+
-				" exit:");
-		
-		assertEquals(myComputer.getMaxInstructionIndex(), 2);
+	public void testGetMemoryDataIndex() {
+		assertEquals(myComputer.getMemoryDataIndex(), 0);
 		
 		myComputer.assemble(".data\n"
 				+ "k:\n"
 				+ " .word -2309\n"
 				+ "m:\n" 
 				+ ".word 2345\n"
+				+ "chicken:\n" 
+				+ ".word -1\n"
 				+ ".text\n"
-				+ "lw $a0, k\n"
 				+ "	j 	exit\n" +
 				" exit:");
 		
-		assertEquals(myComputer.getMaxInstructionIndex(), 1);
-	}
-
-	/**
-	 * Test method for {@link Computer#getSymbolTable()}.
-	 */
-	@Test
-	public void testGetSymbolTable() {
-		assertEquals(myComputer.getSymbolTable(), new TreeMap<String,Integer>());
-		
-		myComputer.assemble(".data\n"
-				+ "k:\n"
-				+ " .word -2309\n"
-				+ "m:\n" 
-				+ ".word 2345\n"
-				+ ".text\n"
-				+ "lw $a0, k\n"
-				+ "	j 	exit\n" +
-				" exit:");
-		
-		Map<String, Integer> temp = new TreeMap<>();
-		temp.put("k", 0);
-		temp.put("m", 1);
-		temp.put("exit", 2);
-		assertEquals(myComputer.getSymbolTable(), temp);
-		
-		myComputer.assemble(".data\n"
-				+ "d:\n"
-				+ " .word -2309\n"
-				+ "g:\n" 
-				+ ".word 2345\n"
-				+ "u:\n"
-				+ ".word 0"
-				+ ".text\n"
-				+ " start:\n"
-				+ "lw $a0, k\n"
-				+ "	j 	exit\n" +
-				" exit:");
-		
-		Map<String, Integer> temp2 = new TreeMap<>();
-		temp2.put("d", 0);
-		temp2.put("g", 1);
-		temp2.put("u", 2);
-		temp2.put("start", 0);
-		temp2.put("exit", 2);
-		assertEquals(myComputer.getSymbolTable(), temp2);		
+		assertEquals(myComputer.getMemoryDataIndex(), 3);
 	}
 	
 	/**
-	 * Test method for {@link HexadecimalString#getFormattedHex()}.
+	 * Test method for {@link model.Computer#getMemoryTextIndex()}.
 	 */
 	@Test
-	public void testGetFormattedHex() {
-	/*	assertEquals(myHexString.getFormattedHex(), "00000000");
+	public void testGetMemoryTextIndex() {
+		assertEquals(myComputer.getMemoryTextIndex(), 0);
 		
-		myHexString.setDecimalValue(24);
-		assertEquals(myHexString.getFormattedHex(), "00000018");
+		myComputer.assemble(".data\n"
+				+ "k:\n"
+				+ " .word -2309\n"
+				+ "m:\n" 
+				+ ".word 2345\n"
+				+ "chicken:\n" 
+				+ ".word -1\n"
+				+ ".text\n"
+				+ "	j 	exit\n" +
+				" exit:");
 		
-		myHexString.setDecimalValue(43);
-		assertEquals(myHexString.getFormattedHex(), "0000002B");
+		assertEquals(myComputer.getMemoryTextIndex(), 1);
 		
-		myHexString.setDecimalValue(-20);
-		assertEquals(myHexString.getFormattedHex(), "FFFFFFEC");
+		myComputer.assemble(
+				"add $a0,$a1,$a2\n" +
+				"addi $a0,$a1,5\n" +
+				"	j 	exit\n" +
+				" exit:");
 		
-		myHexString.setDecimalValue(-2345);
-		assertEquals(myHexString.getFormattedHex(), "FFFFF6D7");
-		
-		myHexString.setDecimalValue(2345);
-		assertEquals(myHexString.getFormattedHex(), "00000929");
-		
-		myHexString.setDecimalValue(2888);
-		assertEquals(myHexString.getFormattedHex(), "00000B48"); */
+		assertEquals(myComputer.getMemoryTextIndex(), 3);
+	}
+	
+	/**
+	 * Test method for {@link model.Computer#getStartingTextAddress()}.
+	 */
+	@Test
+	public void testGetStartingTextAddress() {
+		assertEquals(myComputer.getStartingTextAddress(), 4194304);
+	}
+	
+	/**
+	 * Test method for {@link model.Computer#getAddressGlobal()}.
+	 */
+	@Test
+	public void testGetAddressGlobal() {
+		assertEquals(myComputer.getAddressGlobal(), 268468224);
+	}
+	
+	/**
+	 * Test method for {@link model.Computer#getAddressStack()}.
+	 */
+	@Test
+	public void testGetAddressStack() {
+		assertEquals(myComputer.getAddressStack(), 2147479548);
 	}
 
 }
