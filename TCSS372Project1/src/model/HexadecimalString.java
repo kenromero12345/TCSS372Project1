@@ -8,8 +8,8 @@ package model;
 /**
  * This class represents a hexadecimal string.
  * 
- * @author Michael Zachary Loria
- * @version November 7 2019
+ * @author Michael Zachary Loria, Ken Romero
+ * @version 11.11.19
  */
 public class HexadecimalString {
 	
@@ -53,6 +53,16 @@ public class HexadecimalString {
 		}
 		decimalValue = n;
 	}
+	
+	/**
+	 * Sets the decimal value of the hexadecimal string without
+	 * throwing an exception if it overflows.
+	 */
+	public void setDecimalValueUnsigned(long n) {
+		decimalValue = n;
+		long actualValue = Long.parseLong(getFormattedHex(),16);
+		decimalValue = actualValue;
+	}
 
 	/** 
 	 * Get the decimal value of the hexadecimal string.
@@ -63,22 +73,13 @@ public class HexadecimalString {
 		return decimalValue; 
 	}
 	
-	/** 
-	 * Gets the hexadecimal value of the string unformatted.
-	 * 
-	 * @return The unformatted string representing the hexadecimal value.
-	 */
-	public String getUnformattedHex() {
-		return Long.toHexString(decimalValue);
-	}
-	
 	/**
 	 * Gets the hexadecimal value of the string formatted properly.
 	 * 
 	 * @return The formatted string representing the hexadecimal value.
 	 */
 	public String getFormattedHex() {
-		String format = getUnformattedHex();
+		String format = Long.toHexString(decimalValue);
 		if(format.length() > 8) {
 			format = format.substring(format.length()-8, format.length());
 		}
@@ -93,5 +94,16 @@ public class HexadecimalString {
 			}
 		}
 		return format.toUpperCase();
+	}
+	
+	@Override
+	public String toString() {
+		return getFormattedHex();
+	}
+	
+	@Override
+	public boolean equals(Object theOther) {
+		HexadecimalString temp = (HexadecimalString)theOther;
+		return temp.getFormattedHex().equals(this.getFormattedHex());
 	}
 }
