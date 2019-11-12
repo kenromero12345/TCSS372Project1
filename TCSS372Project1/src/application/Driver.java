@@ -16,7 +16,7 @@ import controller.Simulator;
  * @author Michael Zachary Loria, Ken Romero
  * @version 11.12.19
  */
-public class Main {
+public class Driver {
 	
 	/**
 	 * Launch the application.
