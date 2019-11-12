@@ -396,7 +396,6 @@ public class Computer {
 		int secondReg = myRegisterTable.get(instrArguments[1]);
 		if(mRegisters[firstReg].equals(mRegisters[secondReg])) {
 			int address = mySymbolTable.get(instrArguments[2]);
-			// Subtract 4 because we will add 4 in the execute loop
 			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + address * 4 - 4);
 		}
 	}
