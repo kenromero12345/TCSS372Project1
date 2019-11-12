@@ -9,6 +9,15 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+/**
+ * This is the computer class that represents the backend
+ * of the simulator. The computer controls all of the 
+ * registers, memory, and instructions associated with the
+ * program.
+ * 
+ * @author Michael Zachary Loria, Ken Romero
+ * @version 11.11.19
+ */
 public class Computer {
 	
 	/** The maximum amount of memory allocated for the text segment. */
@@ -22,11 +31,9 @@ public class Computer {
 	
 	/** The starting address of the data segment. */
 	private final static int STARTING_ADDRESS_DATA = 26850092;
-	// Formula for data (nonstack) (address - STARTING_ADDRESS_DATA)/4)
 	
 	/** The starting address of stack pointer. */
 	private final static int STARTING_ADDRESS_STACK = 2147479548;
-	// Formula for stack (address - STARTING_ADDRESS_STACK)/4 + STACK_INDEX
 	
 	/** The staring address of the global pointer. */
 	private final static int STARTING_ADDRESS_GLOBAL = 268468224;
@@ -43,12 +50,10 @@ public class Computer {
 	/** This is the map that maps the register name to a number. */
 	private Map<String, Integer> myRegisterTable;
 	
-	/** This is the array representing memory spaces used for instructions. */ 
+	/** This is the array representing memory spaces used for instructions. Each element is four bytes. */ 
 	private Instruction[] mMemoryTextSegment;
-	 //Each element in the array represents four bytes in memory.
 	
-	/** This is the array represent memory spaces used for storing memory. */
-	//Each element in the array represents four bytes in memory.
+	/** This is the array represent memory spaces used for storing memory. Each element is four bytes. */
 	private HexadecimalString[] mMemoryDataSegment;
 	
 	/** This is the integer that represents the last instruction index in array. */
@@ -75,22 +80,41 @@ public class Computer {
 		setUpRegisterMapping();
 	}
 	
+	/**
+	 * Gets the array of registers.
+	 * 
+	 * @return Array containing the registers.
+	 */
 	public HexadecimalString[] getRegisters() {
 		return mRegisters;
 	}
 	
+	/**
+	 * Gets the array representing the memory text segment.
+	 * 
+	 * @return Array containing the instructions in memory.
+	 */
 	public Instruction[] getMemoryTextSegment() {
 		return mMemoryTextSegment;
 	}
 	
+	/**
+	 * Gets the array representing the memory data segment.
+	 * 
+	 * @return Array containing the data memory.
+	 */
 	public HexadecimalString[] getMemoryDataSegment() {
 		return mMemoryDataSegment;
 	}
 	
+	/**
+	 * Gets the hexadecimal string representing the program counter.
+	 * 
+	 * @return The program counter.
+	 */
 	public HexadecimalString getPC() {
 		return mPC;
 	}
-	
 	
 	/**
 	 * Gets the maximum instruction index.
@@ -110,10 +134,13 @@ public class Computer {
 		return mySymbolTable;
 	}
 	
+	/**
+	 * Executes one line in the program based on the current
+	 * program counter value.
+	 */
 	public void executeOneLine() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String operation = mMemoryTextSegment[currentInstrIndex].getOperation();
-		// Determine operation to be performed
 		if(operation.equals("ADD")) {
 			add();
 		}
@@ -128,7 +155,6 @@ public class Computer {
 		}
 		else if(operation.equals("ADDI")) {
 			addI();
-			//System.out.println("ADDI COMPLETE");
 		}
 		else if(operation.equals("ADDIU")) {
 			addIU();
@@ -163,6 +189,10 @@ public class Computer {
 		mPC.setDecimalValue(mPC.getDecimalValue() + 4);
 	}
 	
+	/**
+	 * Executes all of the lines of instructions in the
+	 * program.
+	 */
 	public void executeAllLines() {
 		while(mPC.getDecimalValue() <= maxInstructionIndex * 4 + STARTING_ADDRESS_TEXT) {
 			executeOneLine();
@@ -182,7 +212,6 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		int secondReg = myRegisterTable.get(instrArguments[2]);
-		// Note: If number cannot be represented in 32 bits, exception will be thrown.
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue()); 
 	}
 	
@@ -198,7 +227,6 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		int secondReg = myRegisterTable.get(instrArguments[2]);
-		// Note: If number cannot be represented in 32 bits, exception will be thrown.
 		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue()); 
 	}
 	
@@ -241,13 +269,9 @@ public class Computer {
 	public void addI() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
-		//System.out.println("THESE ARE THE ARGUMENTS: " + Arrays.deepToString(instrArguments));
 		int destReg = myRegisterTable.get(instrArguments[0]);
-		//System.out.println("DEST REG" + destReg);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
-		//System.out.println("FIRST REG" + firstReg);
 		long immediateOperand = Long.parseLong(instrArguments[2]);
-		//System.out.println("IMMEDIATE" + immediateOperand);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 	
@@ -261,13 +285,9 @@ public class Computer {
 	public void addIU() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
-		//System.out.println("THESE ARE THE ARGUMENTS: " + Arrays.deepToString(instrArguments));
 		int destReg = myRegisterTable.get(instrArguments[0]);
-		//System.out.println("DEST REG" + destReg);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
-		//System.out.println("FIRST REG" + firstReg);
 		long immediateOperand = Long.parseLong(instrArguments[2]);
-		//System.out.println("IMMEDIATE" + immediateOperand);
 		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 	
@@ -301,16 +321,29 @@ public class Computer {
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | immediateOperand);
 	}
 	
+	/**
+	 * Performs the LW operation. If using a label it will take in two operands: the destination
+	 * register and the label. The format will be as follows: LW REG,LABEL. LD can also take 
+	 * another format with three operands. In this format, it will take in the destination register,
+	 * the offset, and the register. The format will be as follows: LW DESTREG,OFFSET(REG). Note that
+	 * if the stack pointer is used as the source register, the data taken from the stack. All other 
+	 * load operations will take the data from the non-stack data segment.
+	 */
 	public void lw() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		if(instrArguments[1].contains("(")) {
-			String[] findAddress = instrArguments[1].split("(");
-			int addressOffset = Integer.getInteger(findAddress[0]);
+			String[] findAddress = instrArguments[1].split("\\(");
+			int addressOffset = Integer.parseInt(findAddress[0]);
 			int sourceReg = myRegisterTable.get(findAddress[1].substring(0,findAddress[1].length()-1));
-			int address = (int)mRegisters[sourceReg].getDecimalValue() + addressOffset;
-			mRegisters[destReg].setDecimalValue(mMemoryDataSegment[(address - STARTING_ADDRESS_DATA)/4].getDecimalValue());
+			int address = (int)mRegisters[sourceReg].getDecimalValue();
+			if(address == mRegisters[29].getDecimalValue()) {
+				mRegisters[destReg].setDecimalValue(mMemoryDataSegment[(address + addressOffset - STARTING_ADDRESS_STACK)/4 + STACK_INDEX].getDecimalValue());
+			}
+			else {
+				mRegisters[destReg].setDecimalValue(mMemoryDataSegment[(address + addressOffset - STARTING_ADDRESS_DATA)/4].getDecimalValue());
+			}
 		}
 		else {
 			int address = mySymbolTable.get(instrArguments[1]);
@@ -318,24 +351,35 @@ public class Computer {
 		}
 	}
 	
+	/**
+	 * Performs the SW operation. If using a label it will take in two operands: the source
+	 * register and the label. The format will be as follows: SW REG,LABEL. SW will store the
+	 * data in the register into the memory address corresponding to the label. SW can also take 
+	 * another format with three operands. In this format, it will take in the source register,
+	 * the offset, and the register containing the address. The format will be as follows: 
+	 * SW REG1,OFFSET(REG2). SW will store data from REG1 into the memory address that is in REG2
+	 * plus the offset. Note that if the stack pointer is used as the second register, the data will be
+	 * stored in the stack. All other store operations will store the data into the non-stack data segment.
+	 */
 	public void sw() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int sourceReg = myRegisterTable.get(instrArguments[0]);
-		// FORMAT: SW $REG1,4($REG2)
 		if(instrArguments[1].contains("(")) {
-			String[] findAddress = instrArguments[1].split("(");
-			int addressOffset = Integer.getInteger(findAddress[0]);
+			String[] findAddress = instrArguments[1].split("\\(");
+			int addressOffset = Integer.parseInt(findAddress[0]);
 			int addressInReg = myRegisterTable.get(findAddress[1].substring(0,findAddress[1].length()-1));
-			int address = (int)mRegisters[addressInReg].getDecimalValue() + addressOffset;
-			if(addressInReg == mRegisters[29].getDecimalValue()) {
-				// It is for stack
-				mMemoryDataSegment[(address - STARTING_ADDRESS_STACK)/4 + STACK_INDEX].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
+			int address = (int)mRegisters[addressInReg].getDecimalValue();
+			if(address == mRegisters[29].getDecimalValue()) {
+				mMemoryDataSegment[(address + addressOffset - STARTING_ADDRESS_STACK)/4 + STACK_INDEX].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
 			}
 			else {
-				// Non stack data
-				mMemoryDataSegment[(address - STARTING_ADDRESS_DATA)/4].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
+				mMemoryDataSegment[(address + addressOffset - STARTING_ADDRESS_DATA)/4].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
 			}
+		}
+		else {
+			int address = mySymbolTable.get(instrArguments[1]);
+			mMemoryDataSegment[address].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
 		}
 	}
 	
@@ -370,25 +414,31 @@ public class Computer {
 		int secondReg = myRegisterTable.get(instrArguments[1]);
 		if(!mRegisters[firstReg].equals(mRegisters[secondReg])) {
 			int address = mySymbolTable.get(instrArguments[2]);
-			// Subtract 4 because we will add 4 in the execute loop
 			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + address * 4 - 4);
 		}
 	}
 	
-	//J FORMAT INSTRUCTIONS
+	/**
+	 * Performs the J operation. Takes in one operand: the label which we 
+	 * will jump to. This is an unconditional jump. Note that the format of
+	 * this operation is: J LABEL.
+	 */
 	public void j() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
-		// Subtract 4 because we will add 4 in the execute loop
 		mPC.setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
 	}
 	
+	/**
+	 * Performs the JR operation. Takes in one operand: the register containing
+	 * the address where will we jump to. This is an unconditional jump. Note that
+	 * the format of this operation is: JR REG.
+	 */
 	public void jr() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
-		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
-		// Subtract 4 because we will add 4 in the execute loop
+		int destAddrIndex = myRegisterTable.get(instrArguments[0]);
 		mPC.setDecimalValue(mRegisters[destAddrIndex].getDecimalValue() - 4);
 	}
 	

@@ -8,8 +8,8 @@ package model;
 /**
  * This class represents a hexadecimal string.
  * 
- * @author Michael Zachary Loria
- * @version November 7 2019
+ * @author Michael Zachary Loria, Ken Romero
+ * @version 11.11.19
  */
 public class HexadecimalString {
 	

@@ -2,6 +2,7 @@
  * TCSS 372 Computer Architecture
  * Project 1
  */
+
 package tests;
 
 import static org.junit.Assert.*;
@@ -20,8 +21,8 @@ import model.Instruction;
  * This class tests the methods in the
  * Computer class.
  * 
- * @author Michael Zachary Loria
- * @version November 7 2019
+ * @author Michael Zachary Loria, Ken Romero
+ * @version 11.11.19
  */
 public class ComputerTest {
 	
@@ -450,30 +451,7 @@ public class ComputerTest {
 		HexadecimalString[] tempReg4 = myComputer.getRegisters();
 		assertEquals(tempReg4[8], temp4);
 		assertEquals(tempReg4[2], temp5);
-	}
-	
-	/**
-	 * Test IllegalArgumentException (positive overflow) for {@link model.Computer#addI()}.
-	 */
-	@Test(expected = IllegalArgumentException.class) 
-	public void testAddIExceptionPositive() {		
-		myComputer.assemble("ADDI $a0,$a0,1\n"
-				+ "ADDI $a1,$a0,2147483647");
-		myComputer.executeOneLine();
-		myComputer.executeOneLine();
-	}
-	
-	/**
-	 * Test IllegalArgumentException (negative overflow) for {@link model.Computer#addI()}.
-	 */
-	@Test(expected = IllegalArgumentException.class) 
-	public void testAddIExceptionNegative() {		
-		myComputer.assemble("ADDI $a0,$a0,-2147483648\n"
-				+ "ADDI $a1,$a0,-1");
-		myComputer.executeOneLine();
-		myComputer.executeOneLine();
-	}
-	
+	}	
 
 	/**
 	 * Test method for {@link model.Computer#addIU()}.
@@ -582,7 +560,110 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testLw() {
-		fail("Not yet implemented");
+		// Label Test
+		myComputer.assemble(".data\n"
+		  		+ "n:\n"
+		  		+ ".word 1738\n" 
+		  		+ ".text\n"
+		  		+ "lw $a0,n");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(1738);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+        assertEquals(tempReg1[4], temp1);
+        
+		myComputer.assemble(".data\n"
+		  		+ "d:\n"
+		  		+ ".word 2349\n"
+		  		+ "e:\n"
+		  		+ ".word -123\n"
+		  		+ "n:\n"
+		  		+ ".word -45\n"
+		  		+ ".text\n"
+		  		+ "lw $a1,e\n"
+		  		+ "lw $a2,d");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(-123);
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(2349);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[5], temp2);
+		assertEquals(tempReg2[6], temp3);
+		
+		// Address with Offset Test in Stack
+		myComputer.assemble("addi $a0,$zero,5\n"
+		  		+ "sw $a0,0($sp)\n"
+		  		+ "lw $a1,0($sp)");
+		myComputer.executeAllLines();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(5);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[5], temp4);
+		
+		myComputer.assemble("addi $a0,$zero,5\n"
+		  		+ "sw $a0,0($sp)\n"
+				+ "addi $a1,$a0,234\n"
+				+ "sw $a1,4($sp)\n"
+				+ "addi $a1,$a0,23\n"
+		  		+ "lw $a1,4($sp)");
+		myComputer.executeAllLines();
+		HexadecimalString temp5 = new HexadecimalString();
+		temp5.setDecimalValue(239);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[5], temp5);
+		
+		// Address with Offset Test in NonStack
+		myComputer.assemble(".data\n"
+		  		+ "addr:\n"
+		  		+ ".word 26850100\n"
+		  		+ "e:\n"
+		  		+ ".word -2\n"
+		  		+ "this:\n"
+		  		+ ".word -33\n"
+		  		+ ".text\n"
+		  		+ "lw $a0,addr\n"
+		  		+ "lw $a1,0($a0)\n"
+		  		+ "lw $a2,-4($a0)");
+		myComputer.executeAllLines();
+		HexadecimalString temp6 = new HexadecimalString();
+		temp6.setDecimalValue(26850100);
+		HexadecimalString temp7 = new HexadecimalString();
+		temp7.setDecimalValue(-33);
+		HexadecimalString temp8 = new HexadecimalString();
+		temp8.setDecimalValue(-2);
+		HexadecimalString[] tempReg5 = myComputer.getRegisters();
+		assertEquals(tempReg5[4], temp6);
+		assertEquals(tempReg5[5], temp7);
+		assertEquals(tempReg5[6], temp8);
+		
+		myComputer.assemble(".data\n"
+		  		+ "addr:\n"
+		  		+ ".word 26850092\n"
+		  		+ "e:\n"
+		  		+ ".word -2\n"
+		  		+ "this:\n"
+		  		+ ".word -33\n"
+		  		+ "that:\n"
+		  		+ ".word -323\n"
+		  		+ "there:\n"
+		  		+ ".word 99\n"
+		  		+ ".text\n"
+		  		+ "lw $a0,addr\n"
+		  		+ "lw $a1,16($a0)\n"
+		  		+ "lw $a2,4($a0)");
+		myComputer.executeAllLines();
+		HexadecimalString temp9 = new HexadecimalString();
+		temp9.setDecimalValue(26850092);
+		HexadecimalString temp10 = new HexadecimalString();
+		temp10.setDecimalValue(99);
+		HexadecimalString temp11 = new HexadecimalString();
+		temp11.setDecimalValue(-2);
+		HexadecimalString[] tempReg6 = myComputer.getRegisters();
+		assertEquals(tempReg6[4], temp9);
+		assertEquals(tempReg6[5], temp10);
+		assertEquals(tempReg6[6], temp11);
 	}
 
 	/**
@@ -590,7 +671,98 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testSw() {
-		fail("Not yet implemented");
+		// Label Test
+		myComputer.assemble(".data\n"
+		  		+ "prod:\n"
+		  		+ ".word 2\n" 
+		  		+ ".text\n"
+		  		+ "addi $a0,$zero,100\n"
+		  		+ "sw $a0,prod\n"
+		  		+ "addi $a0,$zero,1");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(100);
+		HexadecimalString[] tempMem = myComputer.getMemoryDataSegment();
+        assertEquals(tempMem[0], temp1);
+        
+		myComputer.assemble(".data\n"
+		  		+ "d:\n"
+		  		+ ".word 99\n" 
+		  		+ "e:\n"
+		  		+ ".word 0\n" 
+		  		+ "z:\n"
+		  		+ ".word 13\n" 
+		  		+ ".text\n"
+		  		+ "addi $a1,$zero,19\n"
+		  		+ "sw $a1,z\n"
+		  		+ "lw $a2,d\n"
+		  		+ "addi $a2,$a2,100\n"
+		  		+ "sw $a2,e\n");
+		myComputer.executeAllLines();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(19);
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(199);
+		HexadecimalString[] tempMem2 = myComputer.getMemoryDataSegment();
+		assertEquals(tempMem2[2], temp2);
+		assertEquals(tempMem2[1], temp3);
+		
+		// Address with Offset Test in Stack
+		myComputer.assemble("addi $a1,$zero,19\n"
+		  		+ "sw $a1,0($sp)\n"
+		  		+ "addi $a2,$zero,100\n"
+		  		+ "sw $a2,4($sp)\n");
+		myComputer.executeAllLines();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(19);
+		HexadecimalString temp5 = new HexadecimalString();
+		temp5.setDecimalValue(100);
+		HexadecimalString[] tempMem3 = myComputer.getMemoryDataSegment();
+		assertEquals(tempMem3[50], temp4);
+		assertEquals(tempMem3[51], temp5);
+		
+		myComputer.assemble("addi $a1,$zero,190\n"
+		  		+ "sw $a1,100($sp)\n");
+		myComputer.executeAllLines();
+		HexadecimalString temp6 = new HexadecimalString();
+		temp6.setDecimalValue(190);
+		HexadecimalString[] tempMem4 = myComputer.getMemoryDataSegment();
+		assertEquals(tempMem4[75], temp6);
+		
+		// Address with Offset Test in NonStack
+		myComputer.assemble(".data\n"
+		  		+ "addr:\n"
+		  		+ ".word 26850092\n"
+		  		+ ".text\n"
+		  		+ "lw $a0,addr\n"
+		  		+ "addi $a1,$zero,88\n"
+		  		+ "sw $a1,4($a0)\n");
+		myComputer.executeAllLines();
+		HexadecimalString temp7 = new HexadecimalString();
+		temp7.setDecimalValue(26850092);
+		HexadecimalString temp8 = new HexadecimalString();
+		temp8.setDecimalValue(88);
+		HexadecimalString[] tempMem5 = myComputer.getMemoryDataSegment();
+		assertEquals(tempMem5[0], temp7);
+		assertEquals(tempMem5[1], temp8);
+		
+		myComputer.assemble(".data\n"
+		  		+ "addr:\n"
+		  		+ ".word 26850092\n"
+		  		+ ".text\n"
+		  		+ "lw $a0,addr\n"
+		  		+ "addi $a1,$zero,123\n"
+		  		+ "sw $a1,4($a0)\n"
+		  		+ "addi $a1,$a1,77\n"
+		  		+ "sw $a1,12($a0)\n");
+		myComputer.executeAllLines();
+		HexadecimalString temp10 = new HexadecimalString();
+		temp10.setDecimalValue(123);
+		HexadecimalString temp11 = new HexadecimalString();
+		temp11.setDecimalValue(200);
+		HexadecimalString[] tempMem6 = myComputer.getMemoryDataSegment();
+		assertEquals(tempMem6[1], temp10);
+		assertEquals(tempMem6[3], temp11);
 	}
 
 	/**
@@ -667,7 +839,48 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testJ() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "J REC\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "ADDI $A0,$A0,50\n"
+				+ "REC:\n"
+				+ "ADDI $A0,$A0,999");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(999);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+        assertEquals(tempReg1[4], temp1);
+        
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "J KEN\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "MIC:\n"
+				+ "ADDI $A0,$A0,50\n"
+				+ "J EXIT\n"
+				+ "KEN:\n"
+				+ "ADDI $A0,$A0,550\n"
+				+ "J MIC\n" 
+				+ "EXIT:");
+		myComputer.executeAllLines();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(600);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+        assertEquals(tempReg2[4], temp2);
+        
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "J REC\n"
+				+ "FIRST:\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "J EXIT\n"
+				+ "REC:\n"
+				+ "ADDI $A0,$A0,30\n"
+				+ "J FIRST\n"
+				+ "EXIT:");
+		myComputer.executeAllLines();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(280);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+        assertEquals(tempReg3[4], temp3);
 	}
 
 	/**
@@ -675,7 +888,23 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testJr() {
-		fail("Not yet implemented");
+		myComputer.assemble(".data\n"
+		  		+ "n:\n"
+		  		+ ".word 4194312\n" 
+		  		+ ".text\n"
+		  		+ "lw $ra,n\n"
+				+ "J EXIT\n"
+				+ "ADDI $A0,$zero,250\n"
+				+ "J END\n"
+				+ "EXIT:\n"
+				+ "JR $RA\n"
+				+ "END: ");
+
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(250);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+        assertEquals(tempReg1[4], temp1);
 	}
 
 	/**

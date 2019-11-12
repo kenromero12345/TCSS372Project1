@@ -12,8 +12,8 @@ import java.util.Scanner;
  * This is the class that handles a single instruction
  * in assembly language.
  * 
- * @author Michael Zachary Loria
- * @version November 8 2019
+ * @author Michael Zachary Loria, Ken Romero
+ * @version 11.11.19
  */
 public class Instruction {
 	
@@ -48,6 +48,12 @@ public class Instruction {
 		myNumArgs = 0;
 	}
 	
+	/**
+	 * Constructor that sets the instruction based
+	 * on the provided string.
+	 * 
+	 * @param theInstruction The instruction string used for the instruction.
+	 */
 	public Instruction(String theInstruction) {
 		setInstructionString(theInstruction);
 	}

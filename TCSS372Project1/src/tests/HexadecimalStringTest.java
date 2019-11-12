@@ -18,7 +18,8 @@ import model.HexadecimalString;
  * @version November 7 2019
  */
 public class HexadecimalStringTest {
-	//todo: TEST EXCEPTION THROW IF OUT OF BOUNDS
+
+	/** The HexadecimalString used for testing. */
 	private HexadecimalString myHexString;
 
 	/**
@@ -51,6 +52,24 @@ public class HexadecimalStringTest {
 		myHexString.setDecimalValue(-7832);
 		assertEquals(myHexString.getDecimalValue(), -7832);
 	}
+	
+	/**
+	 * Test IllegalArgumentException (positive) for {@link model.Computer#setDecimalValue()}.
+	 */
+	@Test(expected = IllegalArgumentException.class) 
+	public void testSetDecimalValueExceptionPositive() {	
+		long temp = Long.parseLong("2147483648");
+		myHexString.setDecimalValue(temp);
+	}
+	
+	/**
+	 * Test IllegalArgumentException (negative) for {@link model.Computer#setDecimalValue()}.
+	 */
+	@Test(expected = IllegalArgumentException.class) 
+	public void testSetDecimalValueExceptionNegative() {	
+		long temp = Long.parseLong("-2147483649");
+		myHexString.setDecimalValue(temp);
+	}
 
 	/**
 	 * Test method for {@link HexadecimalString#setDecimalValue(long)}.
@@ -71,6 +90,26 @@ public class HexadecimalStringTest {
 		
 		myHexString.setDecimalValue(-2147483648);
 		assertEquals(myHexString.getDecimalValue(), -2147483648); 
+	}
+	
+	/**
+	 * Test method for {@link HexadecimalString#setDecimalValueUnsigned(long)}.
+	 */
+	@Test
+	public void testSetDecimalValueUnsigned() {
+		myHexString.setDecimalValueUnsigned(24);
+		assertEquals(myHexString.getDecimalValue(), 24); 
+		
+		myHexString.setDecimalValueUnsigned(234);
+		assertEquals(myHexString.getDecimalValue(), 234); 
+		
+		long temp = Long.parseLong("2147483648");
+		myHexString.setDecimalValueUnsigned(temp);
+		assertEquals(myHexString.getDecimalValue(), Long.parseLong("2147483648")); 
+		
+		long temp2 = Long.parseLong("-2147483649");
+		myHexString.setDecimalValueUnsigned(temp2);
+		assertEquals(myHexString.getDecimalValue(), Long.parseLong("2147483647")); 
 	}
 	
 	/**
