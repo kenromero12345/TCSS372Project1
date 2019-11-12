@@ -1,0 +1,16 @@
+Michael Zachary Loria
+Ken Romero
+
+TCSS 372 
+Project Decisions
+
+1) We will use assembly language level.
+2) Token delimeters: we will separate each instruction by a line break, we will separate the operator
+   and the operand with a space, and we will separate operands through commas.
+3) We will use a JTextArea to capture the instructions from the user.
+4) The memory will increment by 4. Our simulator will have 100 memory spaces, with 0-49 being for the
+   data and 50-99 being for the stack. We will use the GUI to visualize the memory.
+5) We will have 32 registers, and use the GUI to visualize the registers.
+6) We will have a graphical user interface that the user can interact with. We will have buttons that
+   will allow the user to assemble the program, execute one line, and execute all lines.
+7) The user has the option of executing one line, or all lines.

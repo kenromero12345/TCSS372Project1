@@ -1,8 +1,0 @@
-Decisions:
-1) Assembly language level
-2) token delimeters - space **separate each instruction by line ***maybe throw exception if they don't do it
-3) input to the simulator - JtxtArea
-4) Memory increment by 1, start at 0, end at 49(including), use GUI to visualize
-5) Registers 32, use GUI to visualize
-6) GUI
-7) Execute all
