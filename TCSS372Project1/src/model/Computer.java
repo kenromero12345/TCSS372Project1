@@ -11,129 +11,129 @@ import java.util.TreeMap;
 
 /**
  * This is the computer class that represents the backend
- * of the simulator. The computer controls all of the 
+ * of the simulator. The computer controls all of the
  * registers, memory, and instructions associated with the
  * program.
- * 
+ *
  * @author Michael Zachary Loria, Ken Romero
  * @version 11.11.19
  */
 public class Computer {
-	
+
 	/** The maximum amount of memory allocated for the text segment. */
 	private final static int MAX_MEMORY_TEXT_SEGMENT = 100;
-	
+
 	/** The maximum amount of memory allocated for the data segment. */
 	private final static int MAX_MEMORY_DATA_SEGMENT = 100;
-	
+
 	/** The starting address of the text segment. */
 	private final static int STARTING_ADDRESS_TEXT = 4194304;
-	
+
 	/** The starting address of the data segment. */
 	private final static int STARTING_ADDRESS_DATA = 26850092;
-	
+
 	/** The starting address of stack pointer. */
 	private final static int STARTING_ADDRESS_STACK = 2147479548;
-	
+
 	/** The staring address of the global pointer. */
 	private final static int STARTING_ADDRESS_GLOBAL = 268468224;
-	
+
 	/** The index in the array where stack begins. */
 	private final static int STACK_INDEX = 50;
-	
+
 	/** The maximum amount of registers in the computer. */
 	private final static int MAX_REGISTERS = 32;
-	
+
 	/** This is the array holding all of the registers. */
 	private HexadecimalString[] mRegisters;
-	
+
 	/** This is the map that maps the register name to a number. */
 	private Map<String, Integer> myRegisterTable;
-	
-	/** This is the array representing memory spaces used for instructions. Each element is four bytes. */ 
+
+	/** This is the array representing memory spaces used for instructions. Each element is four bytes. */
 	private Instruction[] mMemoryTextSegment;
-	
+
 	/** This is the array represent memory spaces used for storing memory. Each element is four bytes. */
 	private HexadecimalString[] mMemoryDataSegment;
-	
+
 	/** This is the integer that represents the last instruction index in array. */
 	private int maxInstructionIndex;
-	
+
 	/** This is the hexadecimal string representing the program counter. */
 	private HexadecimalString mPC;
-	
+
 	/** Index counter used internally when assembling the instructions for the memory data segment. */
 	private int memoryDataIndex;
-	
+
 	/** Index counter used internally when assembling the instructions for the memory text segment. */
 	private int memoryTextIndex;
-	
+
 	/** This is the map which represents the symbol table. */
 	private Map<String, Integer> mySymbolTable;
 
 	/**
-	 * Default constructor that initializes fields to their 
+	 * Default constructor that initializes fields to their
 	 * default values.
 	 */
 	public Computer() {
 		resetComputer();
 		setUpRegisterMapping();
 	}
-	
+
 	/**
 	 * Gets the array of registers.
-	 * 
+	 *
 	 * @return Array containing the registers.
 	 */
 	public HexadecimalString[] getRegisters() {
 		return mRegisters;
 	}
-	
+
 	/**
 	 * Gets the array representing the memory text segment.
-	 * 
+	 *
 	 * @return Array containing the instructions in memory.
 	 */
 	public Instruction[] getMemoryTextSegment() {
 		return mMemoryTextSegment;
 	}
-	
+
 	/**
 	 * Gets the array representing the memory data segment.
-	 * 
+	 *
 	 * @return Array containing the data memory.
 	 */
 	public HexadecimalString[] getMemoryDataSegment() {
 		return mMemoryDataSegment;
 	}
-	
+
 	/**
 	 * Gets the hexadecimal string representing the program counter.
-	 * 
+	 *
 	 * @return The program counter.
 	 */
 	public HexadecimalString getPC() {
 		return mPC;
 	}
-	
+
 	/**
 	 * Gets the maximum instruction index.
-	 * 
+	 *
 	 * @return The maximum instruction index.
 	 */
 	public int getMaxInstructionIndex() {
 		return maxInstructionIndex;
 	}
-	
+
 	/**
 	 * Gets the map containing the symbol table for the program.
-	 * 
+	 *
 	 * @return The mapping of string to integer for the symbols in the program.
 	 */
 	public Map<String, Integer> getSymbolTable() {
 		return mySymbolTable;
 	}
-	
+
 	/**
 	 * Executes one line in the program based on the current
 	 * program counter value.
@@ -188,7 +188,7 @@ public class Computer {
 		}
 		mPC.setDecimalValue(mPC.getDecimalValue() + 4);
 	}
-	
+
 	/**
 	 * Executes all of the lines of instructions in the
 	 * program.
@@ -198,7 +198,7 @@ public class Computer {
 			executeOneLine();
 		}
 	}
-	
+
 	/**
 	 * Performs the ADD operation. Takes in three operands: the destination register,
 	 * the first source register, and the second source register. Performs ADD operation
@@ -212,9 +212,9 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		int secondReg = myRegisterTable.get(instrArguments[2]);
-		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue()); 
+		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue());
 	}
-	
+
 	/**
 	 * Performs the ADDU operation. Takes in three operands: the destination register,
 	 * the first source register, and the second source register. Performs ADDU operation
@@ -227,9 +227,9 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		int secondReg = myRegisterTable.get(instrArguments[2]);
-		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue()); 
+		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue());
 	}
-	
+
 	/**
 	 * Performs the AND operation. Takes in three operands: the destination register,
 	 * the first source register, and the second source register. Performs AND operation
@@ -244,7 +244,7 @@ public class Computer {
 		int secondReg = myRegisterTable.get(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & mRegisters[secondReg].getDecimalValue());
 	}
-	
+
 	/**
 	 * Performs the OR operation. Takes in three operands: the destination register,
 	 * the first source register, and the second source register. Performs OR operation
@@ -259,7 +259,7 @@ public class Computer {
 		int secondReg = myRegisterTable.get(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | mRegisters[secondReg].getDecimalValue());
 	}
-	
+
 	/**
 	 * Performs the ADDI operation. Takes in three operands: the destination register,
 	 * the first source register, and the immediate operand. Performs ADDI operation
@@ -274,7 +274,7 @@ public class Computer {
 		long immediateOperand = Long.parseLong(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
-	
+
 	/**
 	 * Performs the ADDIU operation. Takes in three operands: the destination register,
 	 * the first source register, and the immediate operand. Performs ADDIU operation
@@ -290,7 +290,7 @@ public class Computer {
 		long immediateOperand = Long.parseLong(instrArguments[2]);
 		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
-	
+
 	/**
 	 * Performs the ANDI operation. Takes in three operands: the destination register,
 	 * the first source register, and the immediate operand. Performs ANDI operation
@@ -305,7 +305,7 @@ public class Computer {
 		long immediateOperand = Long.parseLong(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & immediateOperand);
 	}
-	
+
 	/**
 	 * Performs the ORI operation. Takes in three operands: the destination register,
 	 * the first source register, and the immediate operand. Performs ORI operation
@@ -320,13 +320,13 @@ public class Computer {
 		long immediateOperand = Long.parseLong(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | immediateOperand);
 	}
-	
+
 	/**
 	 * Performs the LW operation. If using a label it will take in two operands: the destination
-	 * register and the label. The format will be as follows: LW REG,LABEL. LD can also take 
+	 * register and the label. The format will be as follows: LW REG,LABEL. LD can also take
 	 * another format with three operands. In this format, it will take in the destination register,
 	 * the offset, and the register. The format will be as follows: LW DESTREG,OFFSET(REG). Note that
-	 * if the stack pointer is used as the source register, the data taken from the stack. All other 
+	 * if the stack pointer is used as the source register, the data taken from the stack. All other
 	 * load operations will take the data from the non-stack data segment.
 	 */
 	public void lw() {
@@ -350,13 +350,13 @@ public class Computer {
 			mRegisters[destReg].setDecimalValue(mMemoryDataSegment[address].getDecimalValue());
 		}
 	}
-	
+
 	/**
 	 * Performs the SW operation. If using a label it will take in two operands: the source
 	 * register and the label. The format will be as follows: SW REG,LABEL. SW will store the
-	 * data in the register into the memory address corresponding to the label. SW can also take 
+	 * data in the register into the memory address corresponding to the label. SW can also take
 	 * another format with three operands. In this format, it will take in the source register,
-	 * the offset, and the register containing the address. The format will be as follows: 
+	 * the offset, and the register containing the address. The format will be as follows:
 	 * SW REG1,OFFSET(REG2). SW will store data from REG1 into the memory address that is in REG2
 	 * plus the offset. Note that if the stack pointer is used as the second register, the data will be
 	 * stored in the stack. All other store operations will store the data into the non-stack data segment.
@@ -382,7 +382,7 @@ public class Computer {
 			mMemoryDataSegment[address].setDecimalValue(mRegisters[sourceReg].getDecimalValue());
 		}
 	}
-	
+
 	/**
 	 * Performs the BEQ operation. Takes in three operands: the first register,
 	 * the second register, and the label to which to jump to if the contents of
@@ -396,11 +396,10 @@ public class Computer {
 		int secondReg = myRegisterTable.get(instrArguments[1]);
 		if(mRegisters[firstReg].equals(mRegisters[secondReg])) {
 			int address = mySymbolTable.get(instrArguments[2]);
-			// Subtract 4 because we will add 4 in the execute loop
 			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + address * 4 - 4);
 		}
 	}
-	
+
 	/**
 	 * Performs the BNE operation. Takes in three operands: the first register,
 	 * the second register, and the label to which to jump to if the contents of
@@ -417,9 +416,9 @@ public class Computer {
 			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + address * 4 - 4);
 		}
 	}
-	
+
 	/**
-	 * Performs the J operation. Takes in one operand: the label which we 
+	 * Performs the J operation. Takes in one operand: the label which we
 	 * will jump to. This is an unconditional jump. Note that the format of
 	 * this operation is: J LABEL.
 	 */
@@ -429,7 +428,7 @@ public class Computer {
 		int destAddrIndex = mySymbolTable.get(instrArguments[0]);
 		mPC.setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
 	}
-	
+
 	/**
 	 * Performs the JR operation. Takes in one operand: the register containing
 	 * the address where will we jump to. This is an unconditional jump. Note that
@@ -441,11 +440,11 @@ public class Computer {
 		int destAddrIndex = myRegisterTable.get(instrArguments[0]);
 		mPC.setDecimalValue(mRegisters[destAddrIndex].getDecimalValue() - 4);
 	}
-	
+
 	/**
 	 * Assembles the program based on the text input from
 	 * the user.
-	 * 
+	 *
 	 * @param text The text that contains the instructions.
 	 */
 	public void assemble(String text) {
@@ -482,12 +481,12 @@ public class Computer {
 		}
 		myScanner.close();
 	}
-	
+
 	/**
-	 * Scans one line in the data portion of the instructions, 
+	 * Scans one line in the data portion of the instructions,
 	 * and puts the word in appropriate memory location and updates
 	 * the index accordingly.
-	 * 
+	 *
 	 * @param oneLine The line that will be scanned.
 	 */
 	private void scanDataLine(String oneLine) {
@@ -506,11 +505,11 @@ public class Computer {
 					+ oneLine + ".");
 		}
 	}
-	
+
 	/**
 	 * Scans a label in the data section and puts the label
 	 * and corresponding location in the symbol table.
-	 * 
+	 *
 	 * @param labelLine The line containing the label.
 	 */
 	private void scanDataLabelLine(String labelLine) {
@@ -519,11 +518,11 @@ public class Computer {
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryDataIndex);
 		myScanner.close();
 	}
-	
+
 	/**
 	 * Scans a label in the text section and puts the label
 	 * and corresponding location in the symbol table.
-	 * 
+	 *
 	 * @param labelLine The line containing the label.
 	 */
 	private void scanTextLabelLine(String labelLine) {
@@ -532,11 +531,11 @@ public class Computer {
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryTextIndex);
 		myScanner.close();
 	}
-	
+
 	/**
 	 * Puts the line of instruction into the text segment
 	 * of memory and increments the index.
-	 * 
+	 *
 	 * @param instrLine The line of instruction to be added into memory.
 	 */
 	private void putInstructionLine(String instrLine) {
@@ -545,8 +544,8 @@ public class Computer {
 		mMemoryTextSegment[memoryTextIndex] = instr;
 		memoryTextIndex++;
 	}
-	
-	/** 
+
+	/**
 	 * Resets the computer by setting all fields and variables
 	 * back to their initial state.
 	 */
@@ -569,42 +568,42 @@ public class Computer {
 		mRegisters[29].setDecimalValue(STARTING_ADDRESS_STACK);
 		mySymbolTable = new TreeMap<>();
 	}
-	
-	/** 
-	 * Gets the current memory data index. 
+
+	/**
+	 * Gets the current memory data index.
 	 */
 	public int getMemoryDataIndex() {
 		return memoryDataIndex;
 	}
-	
-	/** 
-	 * Gets the current memory text index. 
+
+	/**
+	 * Gets the current memory text index.
 	 */
 	public int getMemoryTextIndex() {
 		return memoryTextIndex;
 	}
-	
+
 	/**
 	 * Gets the starting address of the text.
 	 */
 	public int getStartingTextAddress() {
 		return STARTING_ADDRESS_TEXT;
 	}
-	
+
 	/**
 	 * Gets the starting address of the global pointer.
 	 */
 	public int getAddressGlobal() {
 		return STARTING_ADDRESS_GLOBAL;
 	}
-	
+
 	/**
 	 * Gets the starting address of the stack pointer.
 	 */
 	public int getAddressStack() {
 		return STARTING_ADDRESS_STACK;
 	}
-	
+
 	/**
 	 * Sets up the mapping of registers.
 	 */

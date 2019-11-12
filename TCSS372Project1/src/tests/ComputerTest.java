@@ -121,8 +121,6 @@ public class ComputerTest {
 			tempHexStr[i] = new HexadecimalString();
 		}
 		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr);
-		
-		// ADD MORE TESTS HERE ONCE YOU FINISH SW
 	}
 
 	/**
