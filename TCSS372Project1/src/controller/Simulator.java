@@ -59,13 +59,9 @@ public class Simulator {
 	 * Executes one line of instructions.
 	 */
 	public void executeOneLine() {
-		if((comp.getPC().getDecimalValue() < comp.getMaxInstructionIndex() * 4 + comp.getStartingTextAddress())) {
-			comp.executeOneLine();
-			updateValues();
-		}
-		else {
-			comp.executeOneLine();
-			updateValues();
+		comp.executeOneLine();
+		updateValues();
+		if(comp.programFinished()) {
 			throw new NoSuchElementException();
 		}
 	}

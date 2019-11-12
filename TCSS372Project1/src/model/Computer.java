@@ -194,9 +194,18 @@ public class Computer {
 	 * program.
 	 */
 	public void executeAllLines() {
-		while(mPC.getDecimalValue() <= maxInstructionIndex * 4 + STARTING_ADDRESS_TEXT) {
+		while(!programFinished()) {
 			executeOneLine();
 		}
+	}
+	
+	/**
+	 * Determines if we have reached the end of the program.
+	 * 
+	 * @return True if we have finished the program, false otherwise.
+	 */
+	public boolean programFinished() {
+		return !(mPC.getDecimalValue() <= maxInstructionIndex * 4 + STARTING_ADDRESS_TEXT);
 	}
 
 	/**
@@ -516,6 +525,10 @@ public class Computer {
 		Scanner myScanner = new Scanner(labelLine);
 		String varName = myScanner.next().toUpperCase();
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryDataIndex);
+		if(myScanner.hasNext()) {
+			myScanner.close();
+			throw new IllegalArgumentException();
+		}
 		myScanner.close();
 	}
 
@@ -529,6 +542,10 @@ public class Computer {
 		Scanner myScanner = new Scanner(labelLine);
 		String varName = myScanner.next().toUpperCase();
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryTextIndex);
+		if(myScanner.hasNext()) {
+			myScanner.close();
+			throw new IllegalArgumentException();
+		}
 		myScanner.close();
 	}
 
