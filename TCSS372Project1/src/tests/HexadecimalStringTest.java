@@ -53,26 +53,6 @@ public class HexadecimalStringTest {
 	}
 
 	/**
-	 * Test method for {@link HexadecimalString#getUnformattedHex()}.
-	 */
-	@Test
-	public void testGetUnformattedHex() {
-		assertEquals(myHexString.getUnformattedHex(), "0");
-		
-		myHexString.setDecimalValue(24);
-		assertEquals(myHexString.getUnformattedHex(), "18");
-		
-		myHexString.setDecimalValue(43);
-		assertEquals(myHexString.getUnformattedHex(), "2b");
-		
-		myHexString.setDecimalValue(-20);
-		assertEquals(myHexString.getUnformattedHex(), "ffffffffffffffec");
-		
-		myHexString.setDecimalValue(-2345);
-		assertEquals(myHexString.getUnformattedHex(), "fffffffffffff6d7");
-	}
-
-	/**
 	 * Test method for {@link HexadecimalString#setDecimalValue(long)}.
 	 */
 	@Test
