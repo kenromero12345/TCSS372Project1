@@ -20,17 +20,17 @@ import view.GUI;
 public class Simulator {
 	
 	/** The computer used to simulate MIPS. */
-	private Computer comp;
+	private Computer myComp;
 	
 	/** The GUI used to display the computer. */
-	private GUI gui;
+	private GUI myGUI;
 	
 	/**
 	 * Sets up the computer and the GUI.
 	 */
 	public Simulator() {
-		comp = new Computer();
-		gui = new GUI(this);
+		myComp = new Computer();
+		myGUI = new GUI(this);
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class Simulator {
 	 * accordingly.
 	 */
 	public void execute() {
-		comp.executeAllLines();
+		myComp.executeAllLines();
 		updateValues();
 	}
 	
@@ -49,7 +49,7 @@ public class Simulator {
 	 */
 	public void assemble(String s) {
 		try {
-			comp.assemble(s);
+			myComp.assemble(s);
 		} catch (NoSuchElementException e) {
 			throw e;
 		}
@@ -59,9 +59,9 @@ public class Simulator {
 	 * Executes one line of instructions.
 	 */
 	public void executeOneLine() {
-		comp.executeOneLine();
+		myComp.executeOneLine();
 		updateValues();
-		if(comp.programFinished()) {
+		if(myComp.programFinished()) {
 			throw new NoSuchElementException();
 		}
 	}
@@ -71,11 +71,11 @@ public class Simulator {
 	 */
 	private void updateValues() {
 		for (int i = 0; i < 32; i++) {
-			gui.setRegisterValue(i, "" + comp.getRegisters()[i].getDecimalValue());
+			myGUI.setRegisterValue(i, "" + myComp.getRegisters()[i].getDecimalValue());
 		}
 		
 		for (int i = 0; i < 100; i++) {
-			gui.setMemoryValue(i, "" + comp.getMemoryDataSegment()[i].getDecimalValue());
+			myGUI.setMemoryValue(i, "" + myComp.getMemoryDataSegment()[i].getDecimalValue());
 		}
 	}
 }
