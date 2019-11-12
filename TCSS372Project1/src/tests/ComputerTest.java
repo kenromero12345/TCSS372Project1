@@ -121,7 +121,7 @@ public class ComputerTest {
 		}
 		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr);
 		
-		// ADD MORE TESTS ONCE YOU TEST SW
+		// ADD MORE TESTS HERE ONCE YOU FINISH SW
 	}
 
 	/**
@@ -129,7 +129,27 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testGetPC() {
-		fail("Not yet implemented");
+		myComputer.assemble("AND $a1,$a0,$sp");
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194308);
+		
+		myComputer.assemble("ADDI $a0,$zero,11\n"
+				+ "ADDI $a1,$zero,4\n"
+				+ "OR	$a2,$a0,$a1");
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194308);
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194312);
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194316);
+		
+		myComputer.assemble("ADDI $a0,$zero,11\n"
+				+ "ADDI $a1,$zero,4\n"
+				+ "OR	$a2,$a0,$a1\n"
+				+ "J 	exit\n"
+				+ "EXIT:");
+		myComputer.executeAllLines();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194320);
 	}
 
 	/**
@@ -177,9 +197,9 @@ public class ComputerTest {
 				" exit:");
 		
 		Map<String, Integer> temp = new TreeMap<>();
-		temp.put("k", 0);
-		temp.put("m", 1);
-		temp.put("exit", 2);
+		temp.put("K", 0);
+		temp.put("M", 1);
+		temp.put("EXIT", 2);
 		assertEquals(myComputer.getSymbolTable(), temp);
 		
 		myComputer.assemble(".data\n"
@@ -196,11 +216,11 @@ public class ComputerTest {
 				" exit:");
 		
 		Map<String, Integer> temp2 = new TreeMap<>();
-		temp2.put("d", 0);
-		temp2.put("g", 1);
-		temp2.put("u", 2);
-		temp2.put("start", 0);
-		temp2.put("exit", 2);
+		temp2.put("D", 0);
+		temp2.put("G", 1);
+		temp2.put("U", 2);
+		temp2.put("START", 0);
+		temp2.put("EXIT", 2);
 		assertEquals(myComputer.getSymbolTable(), temp2);	
 	}
 
@@ -209,7 +229,27 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testExecuteOneLine() {
-		fail("Not yet implemented");
+		myComputer.assemble("AND $a1,$a0,$sp");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(0);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[5], temp1);
+		assertEquals(myComputer.getPC().getDecimalValue(),4194308);
+		
+		myComputer.assemble("ADDI $a0,$zero,11\n"
+				+ "ADDI $a1,$zero,4\n"
+				+ "OR	$a2,$a0,$a1");
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194308);
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194312);
+		myComputer.executeOneLine();
+		assertEquals(myComputer.getPC().getDecimalValue(),4194316);
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(15);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[6], temp2);
 	}
 
 	/**
@@ -217,7 +257,24 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testExecuteAllLines() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $a0,$zero,11\n"
+				+ "BEQ	$a0,$zero,exit\n"
+				+ "GOOD:\n"
+				+ "ADDI $a1,$zero,4\n"
+				+ "OR	$a2,$a0,$a1\n"
+				+ "EXIT: ");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(11);
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(4);
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(15);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		assertEquals(tempReg1[5], temp2);
+		assertEquals(tempReg1[6], temp3);
+		assertEquals(myComputer.getPC().getDecimalValue(), 4194320);
 	}
 
 	/**
@@ -225,7 +282,30 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testAdd() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $a0,$a0,2\n"
+				+ "ADD $a0,$zero,$a0");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(2);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		
+		myComputer.assemble("ADDI $a1,$zero,2\n"
+				+ "ADDI $a3,$zero,400\n"
+				+ "ADD $v0,$a3,$a1");
+		myComputer.executeAllLines();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(402);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[2], temp2);
+		
+		myComputer.assemble("ADDI $a1,$zero,4\n"
+				+ "ADD $sp,$sp,$a1");
+		myComputer.executeAllLines();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(2147479552);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[29], temp3);
 	}
 
 	/**
@@ -233,7 +313,40 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testAddU() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $a0,$a0,25\n"
+				+ "ADDU $a0,$zero,$a0");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(25);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		
+		myComputer.assemble("ADDI $a1,$zero,270\n"
+				+ "ADDI $a3,$zero,320\n"
+				+ "ADDU $v0,$a3,$a1");
+		myComputer.executeAllLines();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(590);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[2], temp2);
+		
+		myComputer.assemble("ADDI $a1,$zero,-2147483648\n"
+				+ "ADDI $a2,$zero,-2\n"
+				+ "ADDU $v0,$a1,$a2");
+		myComputer.executeAllLines();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(2147483646);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[2], temp3);
+		
+		myComputer.assemble("ADDI $a1,$zero,2147483647\n"
+				+ "ADDI $a2,$zero,2\n"
+				+ "ADDU $a3,$a1,$a2");
+		myComputer.executeAllLines();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(-2147483647);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[7], temp4);
 	}
 
 	/**
@@ -247,6 +360,29 @@ public class ComputerTest {
 		temp1.setDecimalValue(268468224);
 		HexadecimalString[] tempReg = myComputer.getRegisters();
 		assertEquals(tempReg[4], temp1);
+		
+		myComputer.assemble("AND $gp,$zero,$sp");
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp1.setDecimalValue(0);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[28], temp2);
+		
+		myComputer.assemble("AND $a1,$a0,$sp");
+		myComputer.executeOneLine();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(0);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[5], temp3);
+		
+		myComputer.assemble("ADDI $a0,$zero,11\n"
+				+ "ADDI $a1,$zero,12\n"
+				+ "AND	$a2,$a0,$a1");
+		myComputer.executeAllLines();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(8);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[6], temp4);
 	}
 
 	/**
@@ -254,7 +390,28 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testOr() {
-		fail("Not yet implemented");
+		myComputer.assemble("OR $a0,$gp,$sp");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(2147479548);
+		HexadecimalString[] tempReg = myComputer.getRegisters();
+		assertEquals(tempReg[4], temp1);
+		
+		myComputer.assemble("OR $a1,$zero,$t0");
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp1.setDecimalValue(0);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[5], temp2);
+		
+		myComputer.assemble("ADDI $a0,$zero,11\n"
+				+ "ADDI $a1,$zero,4\n"
+				+ "OR	$a2,$a0,$a1");
+		myComputer.executeAllLines();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(15);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[6], temp3);
 	}
 
 	/**
@@ -262,15 +419,100 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testAddI() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $a0,$a0,2");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(2);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		
+		myComputer.assemble("ADDI $a3,$zero,400");
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(400);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[7], temp2);
+		
+		myComputer.assemble("ADDI $sp,$sp,8");
+		myComputer.executeOneLine();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(2147479556);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[29], temp3);
+		
+		myComputer.assemble("ADDI $t0,$zero,25\nADDI $v0,$t0,-200");
+		myComputer.executeOneLine();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(25);
+		myComputer.executeOneLine();
+		HexadecimalString temp5 = new HexadecimalString();
+		temp5.setDecimalValue(-175);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[8], temp4);
+		assertEquals(tempReg4[2], temp5);
 	}
+	
+	/**
+	 * Test IllegalArgumentException (positive overflow) for {@link model.Computer#addI()}.
+	 */
+	@Test(expected = IllegalArgumentException.class) 
+	public void testAddIExceptionPositive() {		
+		myComputer.assemble("ADDI $a0,$a0,1\n"
+				+ "ADDI $a1,$a0,2147483647");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+	}
+	
+	/**
+	 * Test IllegalArgumentException (negative overflow) for {@link model.Computer#addI()}.
+	 */
+	@Test(expected = IllegalArgumentException.class) 
+	public void testAddIExceptionNegative() {		
+		myComputer.assemble("ADDI $a0,$a0,-2147483648\n"
+				+ "ADDI $a1,$a0,-1");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+	}
+	
 
 	/**
 	 * Test method for {@link model.Computer#addIU()}.
 	 */
 	@Test
 	public void testAddIU() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDIU $a0,$a0,-2147483648\n"
+				+ "ADDIU $a0,$a0,-1");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(2147483647);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		
+		myComputer.assemble("ADDIU $a0,$a0,2");
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(2);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[4], temp2);
+		
+		myComputer.assemble("ADDIU $a3,$zero,400");
+		myComputer.executeOneLine();
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(400);
+		HexadecimalString[] tempReg3 = myComputer.getRegisters();
+		assertEquals(tempReg3[7], temp3);
+		
+		myComputer.assemble("ADDIU $a0,$a0,2147483647\n"
+				+ "ADDIU $a0,$a0,1");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(-2147483648);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[4], temp4);
 	}
 
 	/**
@@ -278,7 +520,30 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testAndI() {
-		fail("Not yet implemented");
+		myComputer.assemble("ANDI $a0,$a0,200");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(0);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		
+		myComputer.assemble("ADDI $a3,$zero,400\n"
+				+ "ANDI $a3,$a3,200");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(128);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[7], temp2);
+		
+		myComputer.assemble("ADDI $t0,$zero,25\n"
+				+ "ANDI $v0,$t0,3999");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(25);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[2], temp4);
 	}
 
 	/**
@@ -286,7 +551,30 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testOrI() {
-		fail("Not yet implemented");
+		myComputer.assemble("ORI $a0,$a0,200");
+		myComputer.executeOneLine();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(200);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+		assertEquals(tempReg1[4], temp1);
+		
+		myComputer.assemble("ADDI $a3,$zero,400\n"
+				+ "ORI $a3,$a3,200");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(472);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+		assertEquals(tempReg2[7], temp2);
+		
+		myComputer.assemble("ADDI $t0,$zero,25\n"
+				+ "ORI $v0,$t0,3999");
+		myComputer.executeOneLine();
+		myComputer.executeOneLine();
+		HexadecimalString temp4 = new HexadecimalString();
+		temp4.setDecimalValue(3999);
+		HexadecimalString[] tempReg4 = myComputer.getRegisters();
+		assertEquals(tempReg4[2], temp4);
 	}
 
 	/**
@@ -310,7 +598,35 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testBeq() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "BEQ $a0,$zero,END\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "ADDI $A0,$A0,50\n"
+				+ "END:\n"
+				+ "ADDI $A0,$A0,1");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(1);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+        assertEquals(tempReg1[4], temp1);
+        
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "BEQ $a0,$zero,END\n"
+				+ "CHICKEN:\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "ADDI $A0,$A0,50\n"
+				+ "END:\n"
+				+ "ADDI $A0,$a0,1\n"
+				+ "ADDI $A1,$a1,1\n"
+				+ "BEQ $A1,$A0,CHICKEN");
+		myComputer.executeAllLines();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(302);
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(2);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+        assertEquals(tempReg2[4], temp2);
+        assertEquals(tempReg2[5],temp3);
 	}
 
 	/**
@@ -318,7 +634,32 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testBne() {
-		fail("Not yet implemented");
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "BNE $sp,$a0,END\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "ADDI $A0,$A0,50\n"
+				+ "END:\n"
+				+ "ADDI $A0,$A0,47");
+		myComputer.executeAllLines();
+		HexadecimalString temp1 = new HexadecimalString();
+		temp1.setDecimalValue(47);
+		HexadecimalString[] tempReg1 = myComputer.getRegisters();
+        assertEquals(tempReg1[4], temp1);
+        
+		myComputer.assemble("ADDI $A0,$zero,0\n"
+				+ "BNE $a0,$zero,END\n"
+				+ "ADDI $A0,$a0,250\n"
+				+ "ADDI $A0,$A0,50\n"
+				+ "ADDI $A0,$a0,1\n"
+				+ "ADDI $A1,$a1,1\n");
+		myComputer.executeAllLines();
+		HexadecimalString temp2 = new HexadecimalString();
+		temp2.setDecimalValue(301);
+		HexadecimalString temp3 = new HexadecimalString();
+		temp3.setDecimalValue(1);
+		HexadecimalString[] tempReg2 = myComputer.getRegisters();
+        assertEquals(tempReg2[4], temp2);
+        assertEquals(tempReg2[5],temp3);
 	}
 
 	/**
@@ -357,13 +698,14 @@ public class ComputerTest {
 		tempInstr[1] = new Instruction("jal     fib");
 		tempInstr[2] = new Instruction("j exit");
 		
-		tempHexStr[0] = new HexadecimalString(15);
+		tempHexStr[0] = new HexadecimalString();
+		tempHexStr[0].setDecimalValue(15);
 		for(int i = 1; i < 100; i++) {
 			tempHexStr[i] = new HexadecimalString();
 		}
 		
-		tempMappings.put("n", 0);
-		tempMappings.put("main", 0);
+		tempMappings.put("N", 0);
+		tempMappings.put("MAIN", 0);
 
 		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr);
 		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr);
@@ -397,20 +739,23 @@ public class ComputerTest {
 		tempInstr2[3] = new Instruction("add $a0,$a1,$a2");
 		tempInstr2[4] = new Instruction("j exit");
 		
-		tempHexStr2[0] = new HexadecimalString(31);
-		tempHexStr2[1] = new HexadecimalString(234);
-		tempHexStr2[2] = new HexadecimalString(-1223);
+		tempHexStr2[0] = new HexadecimalString();
+		tempHexStr2[0].setDecimalValue(31);
+		tempHexStr2[1] = new HexadecimalString();
+		tempHexStr2[1].setDecimalValue(234);
+		tempHexStr2[2] = new HexadecimalString();
+		tempHexStr2[2].setDecimalValue(-1223);
 		
 		for(int i = 3; i < 100; i++) {
 			tempHexStr2[i] = new HexadecimalString();
 		}
 		
-		tempMappings2.put("n", 0);
-		tempMappings2.put("j", 1);
-		tempMappings2.put("value", 2);
-		tempMappings2.put("main", 0);
-		tempMappings2.put("addit", 3);
-		tempMappings2.put("exit", 5);
+		tempMappings2.put("N", 0);
+		tempMappings2.put("J", 1);
+		tempMappings2.put("VALUE", 2);
+		tempMappings2.put("MAIN", 0);
+		tempMappings2.put("ADDIT", 3);
+		tempMappings2.put("EXIT", 5);
 
 		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr2);
 		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr2);
@@ -437,7 +782,7 @@ public class ComputerTest {
 			tempHexStr3[i] = new HexadecimalString();
 		}
 		
-		tempMappings3.put("exit", 4);
+		tempMappings3.put("EXIT", 4);
 
 		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr3);
 		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr3);
@@ -461,18 +806,21 @@ public class ComputerTest {
 		
 		tempInstr4[0] = new Instruction("j exit");
 		
-		tempHexStr4[0] = new HexadecimalString(-2309);
-		tempHexStr4[1] = new HexadecimalString(2345);
-		tempHexStr4[2] = new HexadecimalString(-1);
+		tempHexStr4[0] = new HexadecimalString();
+		tempHexStr4[0].setDecimalValue(-2309);
+		tempHexStr4[1] = new HexadecimalString();
+		tempHexStr4[1].setDecimalValue(2345);
+		tempHexStr4[2] = new HexadecimalString();
+		tempHexStr4[2].setDecimalValue(-1);
 		
 		for(int i = 3; i < 100; i++) {
 			tempHexStr4[i] = new HexadecimalString();
 		}
 		
-		tempMappings4.put("k", 0);
-		tempMappings4.put("m", 1);
-		tempMappings4.put("chicken", 2);
-		tempMappings4.put("exit", 1);
+		tempMappings4.put("K", 0);
+		tempMappings4.put("M", 1);
+		tempMappings4.put("CHICKEN", 2);
+		tempMappings4.put("EXIT", 1);
 
 		assertArrayEquals(myComputer.getMemoryDataSegment(), tempHexStr4);
 		assertArrayEquals(myComputer.getMemoryTextSegment(), tempInstr4);

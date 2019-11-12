@@ -39,10 +39,6 @@ public class HexadecimalString {
 	public HexadecimalString() {
 		decimalValue = 0;
 	}
-	
-	public HexadecimalString(long theNum) {
-		setDecimalValue(theNum);
-	}
 
 	/**
 	 * Sets the decimal value of the hexadecimal string.
@@ -57,6 +53,16 @@ public class HexadecimalString {
 		}
 		decimalValue = n;
 	}
+	
+	/**
+	 * Sets the decimal value of the hexadecimal string without
+	 * throwing an exception if it overflows.
+	 */
+	public void setDecimalValueUnsigned(long n) {
+		decimalValue = n;
+		long actualValue = Long.parseLong(getFormattedHex(),16);
+		decimalValue = actualValue;
+	}
 
 	/** 
 	 * Get the decimal value of the hexadecimal string.
@@ -67,22 +73,13 @@ public class HexadecimalString {
 		return decimalValue; 
 	}
 	
-	/** 
-	 * Gets the hexadecimal value of the string unformatted.
-	 * 
-	 * @return The unformatted string representing the hexadecimal value.
-	 */
-	public String getUnformattedHex() {
-		return Long.toHexString(decimalValue);
-	}
-	
 	/**
 	 * Gets the hexadecimal value of the string formatted properly.
 	 * 
 	 * @return The formatted string representing the hexadecimal value.
 	 */
 	public String getFormattedHex() {
-		String format = getUnformattedHex();
+		String format = Long.toHexString(decimalValue);
 		if(format.length() > 8) {
 			format = format.substring(format.length()-8, format.length());
 		}
@@ -107,6 +104,6 @@ public class HexadecimalString {
 	@Override
 	public boolean equals(Object theOther) {
 		HexadecimalString temp = (HexadecimalString)theOther;
-		return temp.getDecimalValue() == decimalValue;
+		return temp.getFormattedHex().equals(this.getFormattedHex());
 	}
 }

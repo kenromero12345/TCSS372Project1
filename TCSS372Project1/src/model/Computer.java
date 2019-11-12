@@ -128,6 +128,7 @@ public class Computer {
 		}
 		else if(operation.equals("ADDI")) {
 			addI();
+			//System.out.println("ADDI COMPLETE");
 		}
 		else if(operation.equals("ADDIU")) {
 			addIU();
@@ -163,13 +164,18 @@ public class Computer {
 	}
 	
 	public void executeAllLines() {
-		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
-		for(int i = currentInstrIndex; i <= maxInstructionIndex; i++) {
+		while(mPC.getDecimalValue() <= maxInstructionIndex * 4 + STARTING_ADDRESS_TEXT) {
 			executeOneLine();
 		}
 	}
 	
-	//R FORMAT INSTRUCTIONS
+	/**
+	 * Performs the ADD operation. Takes in three operands: the destination register,
+	 * the first source register, and the second source register. Performs ADD operation
+	 * on the first source register and the second source register, and puts the result
+	 * in the destination register. Throws IllegalArgumentException if resulting number
+	 * cannot be represented in 32 bits.
+	 */
 	public void add() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
@@ -180,29 +186,43 @@ public class Computer {
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue()); 
 	}
 	
+	/**
+	 * Performs the ADDU operation. Takes in three operands: the destination register,
+	 * the first source register, and the second source register. Performs ADDU operation
+	 * on the first source register and the second source register, and puts the result
+	 * in the destination register. If the result overflows, no exception will be thrown.
+	 */
 	public void addU() {
-		try {
-			add();
-		}
-		catch(IllegalArgumentException e) {
-			// Do not throw exception. Simple accept it.
-		}
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		int destReg = myRegisterTable.get(instrArguments[0]);
+		int firstReg = myRegisterTable.get(instrArguments[1]);
+		int secondReg = myRegisterTable.get(instrArguments[2]);
+		// Note: If number cannot be represented in 32 bits, exception will be thrown.
+		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + mRegisters[secondReg].getDecimalValue()); 
 	}
 	
+	/**
+	 * Performs the AND operation. Takes in three operands: the destination register,
+	 * the first source register, and the second source register. Performs AND operation
+	 * on the first source register and the second source register, and puts the result
+	 * in the destination register.
+	 */
 	public void and() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		int secondReg = myRegisterTable.get(instrArguments[2]);
-		System.out.println("DEST REG INDEX: " + destReg + "FIRST REG" + firstReg + "SECOND REG" + secondReg);
-		System.out.println("FIRST NUM" + mRegisters[firstReg].getDecimalValue() + " & SECOND NUM" + mRegisters[secondReg].getDecimalValue());
-		System.out.println("FIRST NUM" + mRegisters[firstReg].toString() + " & SECOND NUM" + mRegisters[secondReg].toString());
-		long temp = mRegisters[firstReg].getDecimalValue() & mRegisters[secondReg].getDecimalValue();
-		System.out.println("AND TOGETHER: " + temp);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & mRegisters[secondReg].getDecimalValue());
 	}
 	
+	/**
+	 * Performs the OR operation. Takes in three operands: the destination register,
+	 * the first source register, and the second source register. Performs OR operation
+	 * on the first source register and the second source register, and puts the result
+	 * in the destination register.
+	 */
 	public void or() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
@@ -211,41 +231,73 @@ public class Computer {
 		int secondReg = myRegisterTable.get(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | mRegisters[secondReg].getDecimalValue());
 	}
-	//I FORMAT INSTRUCTIONS
 	
+	/**
+	 * Performs the ADDI operation. Takes in three operands: the destination register,
+	 * the first source register, and the immediate operand. Performs ADDI operation
+	 * on the first source register and the immediate operand, and puts the result
+	 * in the destination register.
+	 */
 	public void addI() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		//System.out.println("THESE ARE THE ARGUMENTS: " + Arrays.deepToString(instrArguments));
 		int destReg = myRegisterTable.get(instrArguments[0]);
+		//System.out.println("DEST REG" + destReg);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
-		long immediateOperand = Long.getLong(instrArguments[2]);
+		//System.out.println("FIRST REG" + firstReg);
+		long immediateOperand = Long.parseLong(instrArguments[2]);
+		//System.out.println("IMMEDIATE" + immediateOperand);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 	
+	/**
+	 * Performs the ADDIU operation. Takes in three operands: the destination register,
+	 * the first source register, and the immediate operand. Performs ADDIU operation
+	 * on the first source register and the immediate operand, and puts the result
+	 * in the destination register. Note that if the operation results in an overflow,
+	 * no exception will be thrown.
+	 */
 	public void addIU() {
-		try {
-			addI();
-		}
-		catch(IllegalArgumentException e) {
-			// Do not throw exception. Simple accept it.
-		}
+		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
+		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
+		//System.out.println("THESE ARE THE ARGUMENTS: " + Arrays.deepToString(instrArguments));
+		int destReg = myRegisterTable.get(instrArguments[0]);
+		//System.out.println("DEST REG" + destReg);
+		int firstReg = myRegisterTable.get(instrArguments[1]);
+		//System.out.println("FIRST REG" + firstReg);
+		long immediateOperand = Long.parseLong(instrArguments[2]);
+		//System.out.println("IMMEDIATE" + immediateOperand);
+		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 	
+	/**
+	 * Performs the ANDI operation. Takes in three operands: the destination register,
+	 * the first source register, and the immediate operand. Performs ANDI operation
+	 * on the first source register and the immediate operand, and puts the result
+	 * in the destination register.
+	 */
 	public void andI() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
-		long immediateOperand = Long.getLong(instrArguments[2]);
+		long immediateOperand = Long.parseLong(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & immediateOperand);
 	}
 	
+	/**
+	 * Performs the ORI operation. Takes in three operands: the destination register,
+	 * the first source register, and the immediate operand. Performs ORI operation
+	 * on the first source register and the immediate operand, and puts the result
+	 * in the destination register.
+	 */
 	public void orI() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
-		long immediateOperand = Long.getLong(instrArguments[2]);
+		long immediateOperand = Long.parseLong(instrArguments[2]);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | immediateOperand);
 	}
 	
@@ -287,28 +339,39 @@ public class Computer {
 		}
 	}
 	
+	/**
+	 * Performs the BEQ operation. Takes in three operands: the first register,
+	 * the second register, and the label to which to jump to if the contents of
+	 * the first register and the second register are equal. Note that the format
+	 * of this operation is: BEQ REG1,REG2,LABEL.
+	 */
 	public void beq() {
-		// FORMAT: BEQ REG1, REG2, LABEL
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int firstReg = myRegisterTable.get(instrArguments[0]);
 		int secondReg = myRegisterTable.get(instrArguments[1]);
-		if(mRegisters[firstReg] == mRegisters[secondReg]) {
+		if(mRegisters[firstReg].equals(mRegisters[secondReg])) {
 			int address = mySymbolTable.get(instrArguments[2]);
 			// Subtract 4 because we will add 4 in the execute loop
-			mPC.setDecimalValue(mMemoryDataSegment[address].getDecimalValue() - 4);
+			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + address * 4 - 4);
 		}
 	}
 	
+	/**
+	 * Performs the BNE operation. Takes in three operands: the first register,
+	 * the second register, and the label to which to jump to if the contents of
+	 * the first register and the second register are not equal. Note that the format
+	 * of this operation is: BNE REG1,REG2,LABEL.
+	 */
 	public void bne() {
 		int currentInstrIndex = ((int)mPC.getDecimalValue() - STARTING_ADDRESS_TEXT)/4;
 		String[] instrArguments = mMemoryTextSegment[currentInstrIndex].getArguments();
 		int firstReg = myRegisterTable.get(instrArguments[0]);
 		int secondReg = myRegisterTable.get(instrArguments[1]);
-		if(mRegisters[firstReg] != mRegisters[secondReg]) {
-			int destAddrIndex = mySymbolTable.get(instrArguments[2]);
+		if(!mRegisters[firstReg].equals(mRegisters[secondReg])) {
+			int address = mySymbolTable.get(instrArguments[2]);
 			// Subtract 4 because we will add 4 in the execute loop
-			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + destAddrIndex * 4 - 4);
+			mPC.setDecimalValue(STARTING_ADDRESS_TEXT + address * 4 - 4);
 		}
 	}
 	
@@ -402,7 +465,7 @@ public class Computer {
 	 */
 	private void scanDataLabelLine(String labelLine) {
 		Scanner myScanner = new Scanner(labelLine);
-		String varName = myScanner.next();
+		String varName = myScanner.next().toUpperCase();
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryDataIndex);
 		myScanner.close();
 	}
@@ -415,7 +478,7 @@ public class Computer {
 	 */
 	private void scanTextLabelLine(String labelLine) {
 		Scanner myScanner = new Scanner(labelLine);
-		String varName = myScanner.next();
+		String varName = myScanner.next().toUpperCase();
 		mySymbolTable.put(varName.substring(0, varName.length()-1), memoryTextIndex);
 		myScanner.close();
 	}
