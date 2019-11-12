@@ -35,7 +35,10 @@ import controller.Simulator;
 public class GUI {
 	
 	/** The maximum amount of registers. */
-	private static final int MAX_REGISTERS = 100;
+	private static final int MAX_MEMORY = 100;
+	
+	/** The cut off index for stack memory. */
+	private static final int STACK_INDEX = 50;
 
 	/** The width of the frame. */
 	private static final int FRAMEWIDTH = 965;
@@ -262,12 +265,21 @@ public class GUI {
 	 * Sets up the memory panel.
 	 */
 	private void setMemJPanel() {
-		for (int i = 0; i < MAX_REGISTERS; i++) {
+		for (int i = 0; i < MAX_MEMORY - STACK_INDEX; i++) {
 			RegisterMemJPanel pan = new RegisterMemJPanel("" + convertToHexOnMARSMemory(i));
 			pan.setBounds(STARTX, STARTY + i * YGAPFORPANELS_R
 					, WIDTHFORPANELS_M, HEIGHTFORPANELS_R);
 			memJPanel.setPreferredSize(new Dimension(WIDTHFORPANELS_R
-					, MAX_REGISTERS * (HEIGHTFORPANELS_R + GAP) + GAP));
+					, MAX_MEMORY * (HEIGHTFORPANELS_R + GAP) + GAP));
+			memJPanel.add(pan);
+			memList.add(pan);
+		}
+		for (int i = STACK_INDEX; i < MAX_MEMORY; i++) {
+			RegisterMemJPanel pan = new RegisterMemJPanel("" + convertToHexOnStack(i-STACK_INDEX));
+			pan.setBounds(STARTX, STARTY + i * YGAPFORPANELS_R
+					, WIDTHFORPANELS_M, HEIGHTFORPANELS_R);
+			memJPanel.setPreferredSize(new Dimension(WIDTHFORPANELS_R
+					, MAX_MEMORY * (HEIGHTFORPANELS_R + GAP) + GAP));
 			memJPanel.add(pan);
 			memList.add(pan);
 		}
@@ -283,7 +295,20 @@ public class GUI {
 		String startHex = "0x";
 		BigInteger startDec = new BigInteger("268500992");
 		BigInteger toHex= new BigInteger(startDec.add(BigInteger.valueOf(i * 4)).toString(), 10);
-		return startHex + toHex.toString(16);
+		return (startHex + toHex.toString(16)).toUpperCase();
+	}
+	
+	/**
+	 * Converts the integer to hex for the stack memory.
+	 * 
+	 * @param i The integer to be converted.
+	 * @return The string containing the hexadecimal conversion.
+	 */
+	private String convertToHexOnStack(int i) {
+		String startHex = "0x";
+		BigInteger startDec = new BigInteger("2147479548");
+		BigInteger toHex= new BigInteger(startDec.add(BigInteger.valueOf(i * 4)).toString(), 10);
+		return (startHex + toHex.toString(16)).toUpperCase();
 	}
 	
 	/**
