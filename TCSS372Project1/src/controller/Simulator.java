@@ -38,6 +38,13 @@ public class Simulator {
 //		gui.setMemoryValue(0, "1");
 //		gui.setRegisterValue(0, "1");
 		comp.executeAllLines();
+		for (int i = 0; i < 32; i++) {
+			gui.setRegisterValue(i, "" + comp.getRegisters()[i].getDecimalValue());
+		}
+		
+		for (int i = 0; i < 100; i++) {
+			gui.setMemoryValue(i, "" + comp.getMemoryDataSegment()[i].getDecimalValue());
+		}
 		//TODO gui does stuff
 	}
 	
@@ -52,6 +59,13 @@ public class Simulator {
 	
 	public void executeOneLine() {
 		comp.executeOneLine();
+		for (int i = 0; i < 32; i++) {
+			gui.setRegisterValue(i, "" + comp.getRegisters()[i].getDecimalValue());
+		}
+		
+		for (int i = 0; i < 100; i++) {
+			gui.setMemoryValue(i, "" + comp.getMemoryDataSegment()[i].getDecimalValue());
+		}
 		//TODO gui does stuff
 	}
 

@@ -393,12 +393,13 @@ public class GUI {
 			frmGui.getContentPane().add(pan);
 			regJPanel.add(pan);
 			i++;
-
 			if (i % 17 == 16) {
 				j++;
 				i = 0;
 			}
 		}
+		regJPanel.get(28).setValue("268468224");
+		regJPanel.get(29).setValue("2147479548");
 	}
 
 	/**
@@ -597,12 +598,14 @@ public class GUI {
 	
 	private void assembleInstruction() {
 		if (txtArea.getText().trim().equals("")) {
-			JOptionPane.showMessageDialog(frmGui, "assembly failed");
+			JOptionPane.showMessageDialog(frmGui, "Assembly Failed");
 		} else {
 			try {
 				sim.assemble(txtArea.getText());
 				resetRegMemColor();
-				JOptionPane.showMessageDialog(frmGui, "assembly done");
+				resetRegisters();
+				resetMemory();
+				JOptionPane.showMessageDialog(frmGui, "Assembly Done");
 				menu.add(execute);
 				menu.add(execute1);
 			} catch (NoSuchElementException e) {
@@ -611,14 +614,44 @@ public class GUI {
 		}
 	}
 	
+	/**
+	 * reset's the memory
+	 */
+	private void resetMemory() {
+		for (int i = 0; i < memList.size(); i++) {
+			memList.get(i).resetTo0();
+		}
+	}
+
+	/**
+	 * reset's the registers
+	 */
+	private void resetRegisters() {
+		for (int i = 0; i < regJPanel.size(); i++) {
+			if (i == 28) {
+				regJPanel.get(28).setValue("268468224");
+			} else if (i == 29) {
+				regJPanel.get(29).setValue("2147479548");
+			} else {
+				regJPanel.get(i).resetTo0();
+			}
+			
+		}
+		
+	}
+
 	public void setRegisterValue(int i, String s) {
-		regJPanel.get(i).setValue(s);
-		regJPanel.get(i).setBackground(Color.gray);
+		if (!s.equals(regJPanel.get(i).getValue())) {
+			regJPanel.get(i).setValue(s);
+			regJPanel.get(i).setBackground(Color.gray);
+		}
 	}
 	
 	public void setMemoryValue(int i, String s) {
-		memList.get(i).setValue(s);
-		memList.get(i).setBackground(Color.gray);
+		if (!s.equals(memList.get(i).getValue())) {
+			memList.get(i).setValue(s);
+			memList.get(i).setBackground(Color.gray);
+		}
 	}
 
 //	/**
@@ -644,7 +677,7 @@ public class GUI {
 	private void executeInstruction() {
 		//try catch
 		sim.execute();
-		JOptionPane.showMessageDialog(frmGui, "execute done");
+		JOptionPane.showMessageDialog(frmGui, "Execution Done");
 		menu.remove(execute);
 		menu.remove(execute1);
 		//if execute work, 
@@ -873,6 +906,21 @@ public class GUI {
 			} else {
 				valLabel.setText(s + " ");
 			}
+		}
+		
+		/**
+		 * get the text of the label
+		 * @return the text
+		 */
+		private String getValue() {
+			return valLabel.getText().substring(0, valLabel.getText().length()-1);
+		}
+		
+		/**
+		 * resets the register or memory
+		 */
+		private void resetTo0() {
+			valLabel.setText("0 ");
 		}
 	}
 }
