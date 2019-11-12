@@ -204,7 +204,7 @@ public class GUI {
 	 * Sets up the frame.
 	 */
 	private void setUpFrame() {
-		frmGui.setTitle("MIPS");
+		frmGui.setTitle("MIPS Simulator");
 		frmGui.setBounds(FRAMEX, FRAMEY, FRAMEWIDTH, FRAMEHEIGHT);
 		frmGui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGui.setJMenuBar(createMenuBar());
@@ -223,14 +223,16 @@ public class GUI {
 		memJPanel = new JPanel();
 		memList = new ArrayList<>();
 		txtArea = new JTextArea();
+		txtArea.setLineWrap(true);
+		txtArea.setWrapStyleWord(true);
 		
 		assemble = new JMenuItem("Assemble");
 		assemble.addActionListener(theEvent -> assembleInstruction());
 		
-		execute = new JMenuItem("Execute");
+		execute = new JMenuItem("Execute All Instructions");
 		execute.addActionListener(theEvent -> executeInstruction());
 		
-		execute1 = new JMenuItem("Execute 1 Instruction");
+		execute1 = new JMenuItem("Execute One Instruction");
 		execute1.addActionListener(theEvent -> execute1Instruction());
 	}
 
@@ -314,8 +316,10 @@ public class GUI {
 		menu.setMnemonic(KeyEvent.VK_F);
 
 		menu.add(assemble);
-//		menu.add(execute);
-
+		menu.add(execute);
+		menu.add(execute1);
+		execute.setEnabled(false);
+		execute1.setEnabled(false);
 	}
 	
 	/**
@@ -323,18 +327,19 @@ public class GUI {
 	 */
 	private void assembleInstruction() {
 		if (txtArea.getText().trim().equals("")) {
-			JOptionPane.showMessageDialog(frmGui, "Assembly Failed");
-		} else {
+			JOptionPane.showMessageDialog(frmGui, "Error assembling program.");
+		} 
+		else {
 			try {
 				sim.assemble(txtArea.getText());
 				resetRegMemColor();
 				resetRegisters();
 				resetMemory();
-				JOptionPane.showMessageDialog(frmGui, "Assembly Done");
-				menu.add(execute);
-				menu.add(execute1);
-			} catch (NoSuchElementException e) {
-				showDialog(e.getMessage());
+				JOptionPane.showMessageDialog(frmGui, "Assembling Program Complete");
+				execute.setEnabled(true);
+				execute1.setEnabled(true);
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(frmGui, "Error assembling program.");
 			}
 		}
 	}
@@ -397,27 +402,41 @@ public class GUI {
 	 * Execute the instructions.
 	 */
 	private void executeInstruction() {
-		//try catch
-		sim.execute();
-		JOptionPane.showMessageDialog(frmGui, "Execution Done");
-		menu.remove(execute);
-		menu.remove(execute1);
-		//if execute work, 
-//		menu.remove(execute);
-//		comp.execute(this, txtArea.getText());
+		try {
+			sim.execute();
+			JOptionPane.showMessageDialog(frmGui, "Program execution complete.");
+			execute.setEnabled(false);
+			execute1.setEnabled(false);
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(frmGui, "Error executing program. Program execution has been terminated.");
+			execute.setEnabled(false);
+			execute1.setEnabled(false);
+		}
+		
 	}
 	
 	/**
 	 * Executes one instruction.
 	 */
 	private void execute1Instruction() {
-		resetRegMemColor();
-		sim.executeOneLine();
-		JOptionPane.showMessageDialog(frmGui, "execute one instruction");
-		
-		//TODO check if instruction is done
-//		menu.remove(execute);
-//		menu.remove(execute1);
+		try {
+			resetRegMemColor();
+			sim.executeOneLine();
+			JOptionPane.showMessageDialog(frmGui, "Executing one instruction complete.");
+		}
+		catch (Exception e) {
+			if(e instanceof NoSuchElementException) {
+				JOptionPane.showMessageDialog(frmGui, "Program execution complete.");
+				execute.setEnabled(false);
+				execute1.setEnabled(false);
+			}
+			else {
+				JOptionPane.showMessageDialog(frmGui, "Error executing line. Program execution has been terminated.");
+				execute.setEnabled(false);
+				execute1.setEnabled(false);
+			}
+		}
 	}
 
 	/**

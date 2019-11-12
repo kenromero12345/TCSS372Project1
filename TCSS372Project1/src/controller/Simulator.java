@@ -39,13 +39,7 @@ public class Simulator {
 	 */
 	public void execute() {
 		comp.executeAllLines();
-		for (int i = 0; i < 32; i++) {
-			gui.setRegisterValue(i, "" + comp.getRegisters()[i].getDecimalValue());
-		}
-		
-		for (int i = 0; i < 100; i++) {
-			gui.setMemoryValue(i, "" + comp.getMemoryDataSegment()[i].getDecimalValue());
-		}
+		updateValues();
 	}
 	
 	/**
@@ -55,7 +49,7 @@ public class Simulator {
 	 */
 	public void assemble(String s) {
 		try {
-		comp.assemble(s);
+			comp.assemble(s);
 		} catch (NoSuchElementException e) {
 			throw e;
 		}
@@ -65,7 +59,21 @@ public class Simulator {
 	 * Executes one line of instructions.
 	 */
 	public void executeOneLine() {
-		comp.executeOneLine();
+		if((comp.getPC().getDecimalValue() < comp.getMaxInstructionIndex() * 4 + comp.getStartingTextAddress())) {
+			comp.executeOneLine();
+			updateValues();
+		}
+		else {
+			comp.executeOneLine();
+			updateValues();
+			throw new NoSuchElementException();
+		}
+	}
+	
+	/**
+	 * Updates the register values and memory values accordingly.
+	 */
+	private void updateValues() {
 		for (int i = 0; i < 32; i++) {
 			gui.setRegisterValue(i, "" + comp.getRegisters()[i].getDecimalValue());
 		}
@@ -74,5 +82,4 @@ public class Simulator {
 			gui.setMemoryValue(i, "" + comp.getMemoryDataSegment()[i].getDecimalValue());
 		}
 	}
-
 }
