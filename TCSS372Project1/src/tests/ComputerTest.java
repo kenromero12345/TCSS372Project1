@@ -36,6 +36,65 @@ public class ComputerTest {
 	public void setUp() throws Exception {
 		myComputer = new Computer();
 	}
+	
+//	@Test
+//	public void testAdd() {
+//		myComputer.assemble("ADD $t0,$t0,$t0");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 0);
+//		myComputer.assemble("ADDI $t0,$t0,7");
+//		myComputer.assemble("ADDI $t0,$t0,$t0");
+//		myComputer.executeOneLine();
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 7);
+//	}
+//	
+//	@Test
+//	public void testAddI() {
+//		myComputer.assemble("ADDI $t0,$t0,5");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 5);
+//	}
+//	
+//	@Test
+//	public void testOr() {
+//		myComputer.assemble("ADDI $t0,$t0,1");
+//		myComputer.executeOneLine();
+//		myComputer.assemble("OR $t0,$t0,$t0");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 1);
+//	}
+//	
+//	@Test
+//	public void testOrI() {
+//		myComputer.assemble("ORI $t0,$t0,1");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 1);
+//	}
+//	
+//	@Test
+//	public void testAndI() {
+//		myComputer.assemble("ANDI $t0,$t0,1");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 1);
+//	}
+//	
+//	@Test
+//	public void testAnd() {
+//		myComputer.assemble("ADDI $t0,$t0,1");
+//		myComputer.executeOneLine();
+//		myComputer.assemble("AND $t0,$t0,$t0");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 0);
+//	}
+	
+//	@Test
+//	public void testBeq() {
+//		myComputer.assemble("BEQ $t0,$t1,\n"
+//				+ "			ADDI $t0,$t0,1");
+//		myComputer.executeOneLine();
+//		assertEquals(myComputer.getRegisters()[8].getDecimalValue(), 0);
+//	}
 
 	/**
 	 * Test method for {@link model.Computer#Computer()}.
