@@ -14,3 +14,22 @@ Project Decisions
 6) We will have a graphical user interface that the user can interact with. We will have buttons that
    will allow the user to assemble the program, execute one line, and execute all lines.
 7) The user has the option of executing one line, or all lines.
+
+----
+Opcode should be all capital letters. ex. ADD, ADDI 
+Registers are with $ ex. %t0, %zero
+Constant is from -2^15 to 2^15 - 1
+Format of the instruction is the following:
+	R-format
+	<opcode> <register>,<register>,<register> ex. ADD $zero,$t0,$a0
+	I-format except LW, SW, BEQ, BNE
+	<opcode> <register>,<register>,<constant>
+	LW, SW
+	
+	BEQ, BNE
+	
+	J
+	
+	JR
+
+
