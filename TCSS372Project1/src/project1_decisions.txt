@@ -19,7 +19,9 @@ Project Decisions
 Opcode should be all capital letters. ex. ADD or ADDI 
 Registers are with "$"(dollar sign). ex. %t0 or %zero
 Constant is from -2^15 to 2^15 - 1.
-Labels are formatted ...
+Labels should not have any operand or operators in the same line. 
+	ex. <label>
+			<instruction>
 Format of the instruction is the following:
 	R-format
 	<opcode> <register>,<register>,<register> ex. ADD $zero,$t0,$a0
