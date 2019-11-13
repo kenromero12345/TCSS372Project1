@@ -485,6 +485,9 @@ public class GUI {
 		}
 	}
 	
+	/**
+	 * @param i the long to change the pc value
+	 */
 	public void setPC(long i) {
 		pcJPanel.setValue("" + i);
 	}
