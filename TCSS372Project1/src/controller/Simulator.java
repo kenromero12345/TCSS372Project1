@@ -64,6 +64,7 @@ public class Simulator {
 		if(myComp.programFinished()) {
 			throw new NoSuchElementException();
 		}
+		myGUI.setPC(myComp.getPC().getDecimalValue());
 	}
 	
 	/**
@@ -77,5 +78,6 @@ public class Simulator {
 		for (int i = 0; i < 100; i++) {
 			myGUI.setMemoryValue(i, "" + myComp.getMemoryDataSegment()[i].getDecimalValue());
 		}
+		myGUI.setPC(myComp.getPC().getDecimalValue());
 	}
 }
