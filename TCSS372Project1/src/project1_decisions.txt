@@ -35,5 +35,5 @@ Format of the instruction is the following:
 	
 	JR
 
-You can use .data and ...
+You can use .data and ... but you don't have to
 They are formatted by ...
