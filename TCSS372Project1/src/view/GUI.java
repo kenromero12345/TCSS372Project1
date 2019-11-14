@@ -368,7 +368,6 @@ public class GUI {
 				resetRegMemColor();
 				resetRegisters();
 				resetMemory();
-				setPC(0);
 				JOptionPane.showMessageDialog(frmGui, "Assembling Program Complete");
 				execute.setEnabled(true);
 				execute1.setEnabled(true);

@@ -50,6 +50,7 @@ public class Simulator {
 	public void assemble(String s) {
 		try {
 			myComp.assemble(s);
+			myGUI.setPC(myComp.getPC().getDecimalValue());
 		} catch (NoSuchElementException e) {
 			throw e;
 		}
