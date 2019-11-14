@@ -50,7 +50,7 @@ public class Simulator {
 	public void assemble(String s) {
 		try {
 			myComp.assemble(s);
-			myGUI.setPC(myComp.getPC().getDecimalValue());
+			updateValues();
 		} catch (NoSuchElementException e) {
 			throw e;
 		}
@@ -65,7 +65,6 @@ public class Simulator {
 		if(myComp.programFinished()) {
 			throw new NoSuchElementException();
 		}
-		myGUI.setPC(myComp.getPC().getDecimalValue());
 	}
 	
 	/**
