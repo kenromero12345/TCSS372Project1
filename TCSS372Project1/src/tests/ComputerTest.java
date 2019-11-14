@@ -329,21 +329,21 @@ public class ComputerTest {
 		HexadecimalString[] tempReg2 = myComputer.getRegisters();
 		assertEquals(tempReg2[2], temp2);
 		
-		myComputer.assemble("ADDI $a1,$zero,-2147483648\n"
+		myComputer.assemble("ADDI $a1,$zero,-214\n"
 				+ "ADDI $a2,$zero,-2\n"
 				+ "ADDU $v0,$a1,$a2");
 		myComputer.executeAllLines();
 		HexadecimalString temp3 = new HexadecimalString();
-		temp3.setDecimalValue(2147483646);
+		temp3.setDecimalValue(-216);
 		HexadecimalString[] tempReg3 = myComputer.getRegisters();
 		assertEquals(tempReg3[2], temp3);
 		
-		myComputer.assemble("ADDI $a1,$zero,2147483647\n"
+		myComputer.assemble("ADDI $a1,$zero,3647\n"
 				+ "ADDI $a2,$zero,2\n"
 				+ "ADDU $a3,$a1,$a2");
 		myComputer.executeAllLines();
 		HexadecimalString temp4 = new HexadecimalString();
-		temp4.setDecimalValue(-2147483647);
+		temp4.setDecimalValue(3649);
 		HexadecimalString[] tempReg4 = myComputer.getRegisters();
 		assertEquals(tempReg4[7], temp4);
 	}
@@ -456,13 +456,13 @@ public class ComputerTest {
 	 */
 	@Test
 	public void testAddIU() {
-		myComputer.assemble("ADDIU $a0,$a0,-2147483648\n"
+		myComputer.assemble("ADDIU $a0,$a0,32735\n"
 				+ "ADDIU $a0,$a0,-1");
 		myComputer.executeOneLine();
 		myComputer.executeOneLine();
 		
 		HexadecimalString temp1 = new HexadecimalString();
-		temp1.setDecimalValue(2147483647);
+		temp1.setDecimalValue(32734);
 		HexadecimalString[] tempReg1 = myComputer.getRegisters();
 		assertEquals(tempReg1[4], temp1);
 		
@@ -480,13 +480,13 @@ public class ComputerTest {
 		HexadecimalString[] tempReg3 = myComputer.getRegisters();
 		assertEquals(tempReg3[7], temp3);
 		
-		myComputer.assemble("ADDIU $a0,$a0,2147483647\n"
+		myComputer.assemble("ADDIU $a0,$a0,-32748\n"
 				+ "ADDIU $a0,$a0,1");
 		myComputer.executeOneLine();
 		myComputer.executeOneLine();
 		
 		HexadecimalString temp4 = new HexadecimalString();
-		temp4.setDecimalValue(-2147483648);
+		temp4.setDecimalValue(-32747);
 		HexadecimalString[] tempReg4 = myComputer.getRegisters();
 		assertEquals(tempReg4[4], temp4);
 	}
@@ -615,7 +615,7 @@ public class ComputerTest {
 		// Address with Offset Test in NonStack
 		myComputer.assemble(".data\n"
 		  		+ "addr:\n"
-		  		+ ".word 26850100\n"
+		  		+ ".word 268501000\n"
 		  		+ "e:\n"
 		  		+ ".word -2\n"
 		  		+ "this:\n"
@@ -626,7 +626,7 @@ public class ComputerTest {
 		  		+ "lw $a2,-4($a0)");
 		myComputer.executeAllLines();
 		HexadecimalString temp6 = new HexadecimalString();
-		temp6.setDecimalValue(26850100);
+		temp6.setDecimalValue(268501000);
 		HexadecimalString temp7 = new HexadecimalString();
 		temp7.setDecimalValue(-33);
 		HexadecimalString temp8 = new HexadecimalString();
@@ -638,7 +638,7 @@ public class ComputerTest {
 		
 		myComputer.assemble(".data\n"
 		  		+ "addr:\n"
-		  		+ ".word 26850092\n"
+		  		+ ".word 268500992\n"
 		  		+ "e:\n"
 		  		+ ".word -2\n"
 		  		+ "this:\n"
@@ -653,7 +653,7 @@ public class ComputerTest {
 		  		+ "lw $a2,4($a0)");
 		myComputer.executeAllLines();
 		HexadecimalString temp9 = new HexadecimalString();
-		temp9.setDecimalValue(26850092);
+		temp9.setDecimalValue(268500992);
 		HexadecimalString temp10 = new HexadecimalString();
 		temp10.setDecimalValue(99);
 		HexadecimalString temp11 = new HexadecimalString();
@@ -730,14 +730,14 @@ public class ComputerTest {
 		// Address with Offset Test in NonStack
 		myComputer.assemble(".data\n"
 		  		+ "addr:\n"
-		  		+ ".word 26850092\n"
+		  		+ ".word 268500992\n"
 		  		+ ".text\n"
 		  		+ "lw $a0,addr\n"
 		  		+ "addi $a1,$zero,88\n"
 		  		+ "sw $a1,4($a0)\n");
 		myComputer.executeAllLines();
 		HexadecimalString temp7 = new HexadecimalString();
-		temp7.setDecimalValue(26850092);
+		temp7.setDecimalValue(268500992);
 		HexadecimalString temp8 = new HexadecimalString();
 		temp8.setDecimalValue(88);
 		HexadecimalString[] tempMem5 = myComputer.getMemoryDataSegment();
@@ -746,7 +746,7 @@ public class ComputerTest {
 		
 		myComputer.assemble(".data\n"
 		  		+ "addr:\n"
-		  		+ ".word 26850092\n"
+		  		+ ".word 268500992\n"
 		  		+ ".text\n"
 		  		+ "lw $a0,addr\n"
 		  		+ "addi $a1,$zero,123\n"
