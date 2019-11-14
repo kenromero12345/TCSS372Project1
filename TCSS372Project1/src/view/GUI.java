@@ -366,8 +366,6 @@ public class GUI {
 			try {
 				sim.assemble(txtArea.getText());
 				resetRegMemColor();
-				resetRegisters();
-				resetMemory();
 				JOptionPane.showMessageDialog(frmGui, "Assembling Program Complete");
 				execute.setEnabled(true);
 				execute1.setEnabled(true);
@@ -375,32 +373,6 @@ public class GUI {
 				JOptionPane.showMessageDialog(frmGui, "Error assembling program.");
 			}
 		}
-	}
-	
-	/**
-	 * Reset's the memory.
-	 */
-	private void resetMemory() {
-		for (int i = 0; i < memList.size(); i++) {
-			memList.get(i).resetTo0();
-		}
-	}
-
-	/**
-	 * Reset's the registers.
-	 */
-	private void resetRegisters() {
-		for (int i = 0; i < regJPanel.size(); i++) {
-			if (i == 28) {
-				regJPanel.get(28).setValue("268468224");
-			} else if (i == 29) {
-				regJPanel.get(29).setValue("2147479548");
-			} else {
-				regJPanel.get(i).resetTo0();
-			}
-			
-		}
-		
 	}
 
 	/**
@@ -537,13 +509,6 @@ public class GUI {
 		 */
 		private String getValue() {
 			return valLabel.getText().substring(0, valLabel.getText().length()-1);
-		}
-		
-		/**
-		 * Resets the register or memory
-		 */
-		private void resetTo0() {
-			valLabel.setText("0 ");
 		}
 	}
 }
