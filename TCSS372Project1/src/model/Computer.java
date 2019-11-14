@@ -30,13 +30,19 @@ public class Computer {
 	private final static int STARTING_ADDRESS_TEXT = 4194304;
 
 	/** The starting address of the data segment. */
-	private final static int STARTING_ADDRESS_DATA = 26850092;
+	private final static int STARTING_ADDRESS_DATA = 268500992;
 
 	/** The starting address of stack pointer. */
 	private final static int STARTING_ADDRESS_STACK = 2147479548;
 
 	/** The staring address of the global pointer. */
 	private final static int STARTING_ADDRESS_GLOBAL = 268468224;
+	
+	/** The maximum operand in immediate mode. */
+	private final static int MAX_OP_IMMEDIATE = 32767;
+	
+	/** The minimum operand in immediate mode. */
+	private final static int MIN_OP_IMMEDIATE = -32768;
 
 	/** The index in the array where stack begins. */
 	private final static int STACK_INDEX = 50;
@@ -281,6 +287,7 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		long immediateOperand = Long.parseLong(instrArguments[2]);
+		checkImmediateOp(immediateOperand);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 
@@ -297,6 +304,7 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		long immediateOperand = Long.parseLong(instrArguments[2]);
+		checkImmediateOp(immediateOperand);
 		mRegisters[destReg].setDecimalValueUnsigned(mRegisters[firstReg].getDecimalValue() + immediateOperand);
 	}
 
@@ -312,6 +320,7 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		long immediateOperand = Long.parseLong(instrArguments[2]);
+		checkImmediateOp(immediateOperand);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() & immediateOperand);
 	}
 
@@ -327,6 +336,7 @@ public class Computer {
 		int destReg = myRegisterTable.get(instrArguments[0]);
 		int firstReg = myRegisterTable.get(instrArguments[1]);
 		long immediateOperand = Long.parseLong(instrArguments[2]);
+		checkImmediateOp(immediateOperand);
 		mRegisters[destReg].setDecimalValue(mRegisters[firstReg].getDecimalValue() | immediateOperand);
 	}
 
@@ -547,6 +557,19 @@ public class Computer {
 			throw new IllegalArgumentException();
 		}
 		myScanner.close();
+	}
+	
+	/**
+	 * Checks if the immediate operand is within range given the
+	 * 16 bits. If not throws illegal argument exception.
+	 * 
+	 * @param theOperand The long operand to be checked.
+	 * @throws IllegalArgumentException if the value is out of range.
+	 */
+	private void checkImmediateOp(long theOperand) {
+		if(theOperand > MAX_OP_IMMEDIATE || theOperand < MIN_OP_IMMEDIATE) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	/**
