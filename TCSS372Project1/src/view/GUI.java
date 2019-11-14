@@ -148,6 +148,9 @@ public class GUI {
 	/** The controller of the application. */
 	private Simulator sim;
 	
+	/** The pc of the gui **/
+	private RegisterMemJPanel pcJPanel;
+	
 	/**
 	 * Create the application.
 	 * 
@@ -178,8 +181,13 @@ public class GUI {
 		frmGui.getContentPane().add(scrollPaneInst);
 		JScrollPane scrollPaneMem = new JScrollPane(memJPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPaneMem.setBounds(YFORPANEL_M, YFORPANEL, WIDTHFORPANEL_M, HEIGHTFORPANELS);
+		scrollPaneMem.setBounds(YFORPANEL_M, YFORPANEL, WIDTHFORPANEL_M, HEIGHTFORPANELS - YGAPFORPANELS_R);
 		frmGui.getContentPane().add(scrollPaneMem);
+		
+		pcJPanel = new RegisterMemJPanel("PC");
+		pcJPanel.setBounds(YFORPANEL_M + 10, YGAPFORPANELS_R + 15 * YGAPFORPANELS_R
+				, WIDTHFORPANELS_M, HEIGHTFORPANELS_R);
+		frmGui.getContentPane().add(pcJPanel);
 
 		setLabels();
 		setRegisterJPanel();
@@ -360,6 +368,7 @@ public class GUI {
 				resetRegMemColor();
 				resetRegisters();
 				resetMemory();
+				setPC(0);
 				JOptionPane.showMessageDialog(frmGui, "Assembling Program Complete");
 				execute.setEnabled(true);
 				execute1.setEnabled(true);
@@ -474,6 +483,13 @@ public class GUI {
 		for (RegisterMemJPanel p : regJPanel)  {
 			p.setBackground(Color.lightGray);
 		}
+	}
+	
+	/**
+	 * @param i the long to change the pc value
+	 */
+	public void setPC(long i) {
+		pcJPanel.setValue("" + i);
 	}
 
 	/**

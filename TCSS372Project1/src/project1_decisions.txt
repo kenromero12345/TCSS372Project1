@@ -14,3 +14,42 @@ Project Decisions
 6) We will have a graphical user interface that the user can interact with. We will have buttons that
    will allow the user to assemble the program, execute one line, and execute all lines.
 7) The user has the option of executing one line, or all lines.
+
+----
+Opcode should be all capital letters. ex. ADD or ADDI 
+Registers are with "$"(dollar sign). ex. %t0 or %zero
+Constant is from -2^15(-32768) to 2^15 - 1(32767).
+Labels should not have any operand or operators in the same line. 
+	ex. <label>
+			<instruction>
+J, BEQ, BNE will always go to the label and not take account how far the label is from PC
+JR will always go to the registers and not take account how far the register's data is from PC
+Format of the instruction is the following:
+	R-format
+	<opcode> <register>,<register>,<register> ex. ADD $zero,$t0,$a0
+	I-format except LW, SW, BEQ, BNE
+	<opcode> <register>,<register>,<constant>
+	LW, SW
+	
+	
+	
+	BEQ, BNE
+	
+	J
+	
+	JR
+
+	
+You can use .data and .text but you don't have to do it
+They are formatted by ...
+
+-----
+
+Ken
+GUI:
+
+Simulator:
+
+
+
+Michael
