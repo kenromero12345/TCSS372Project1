@@ -22,6 +22,8 @@ Constant is from -2^15(-32768) to 2^15 - 1(32767).
 Labels should not have any operand or operators in the same line. 
 	ex. <label>
 			<instruction>
+J, BEQ, BNE will always go to the label and not take account how far the label is from PC
+JR will always go to the registers and not take account how far the register's data is from PC
 Format of the instruction is the following:
 	R-format
 	<opcode> <register>,<register>,<register> ex. ADD $zero,$t0,$a0
@@ -29,11 +31,25 @@ Format of the instruction is the following:
 	<opcode> <register>,<register>,<constant>
 	LW, SW
 	
+	
+	
 	BEQ, BNE
 	
 	J
 	
 	JR
 
-You can use .data and ... but you don't have to
+	
+You can use .data and .text but you don't have to do it
 They are formatted by ...
+
+-----
+
+Ken
+GUI:
+
+Simulator:
+
+
+
+Michael
