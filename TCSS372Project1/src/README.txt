@@ -66,3 +66,4 @@ In order for the MIPS simulator to function properly, the user should read the f
        Example: J FIB
     n) JR <register>
        Example: JR $RA
+11. To execute the program, the user must click 'File' at the top of the file menu. The user must then click 'Assemble' to assemble the program. Afterwards, the user can click 'Execute All Instructions' or 'Execute One Instruction'.
